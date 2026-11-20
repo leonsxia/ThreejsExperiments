@@ -55,11 +55,6 @@ export default class ParticlesMorphingScene extends World {
 
     }
 
-    setText() {
-
-
-    }
-
     setModel() {
 
         this.models = this.resources.items.textSamples.scene;
@@ -232,6 +227,7 @@ export default class ParticlesMorphingScene extends World {
         this.shaderFolder.addColor(this.particles, 'colorA').onChange(value => this.particles.material.uniforms.uColorA.value.set(value));
         this.shaderFolder.addColor(this.particles, 'colorB').onChange(value => this.particles.material.uniforms.uColorB.value.set(value));
 
+        this.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
         this.shaderFolder.add(this.particles.material.uniforms.uDuration, 'value', 0, 1, .001).name('uDuration').listen();
         this.shaderFolder.add(this.particles.material.uniforms.uProgress, 'value', 0, 1, .001).name('uProgress').listen();
 

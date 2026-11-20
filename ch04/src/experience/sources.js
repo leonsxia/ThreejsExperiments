@@ -155,5 +155,9 @@ export default [
         name: 'textSamples',
         type: 'gltfModel',
         path: 'models/textSamples.glb'
+    }, {
+        name: 'strandedBoat',
+        type: 'gltfModel',
+        path: 'models/boat/model.glb'
     }
 ];

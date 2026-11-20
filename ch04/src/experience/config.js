@@ -215,5 +215,16 @@ export default {
         renderer: {
             clearColor: '#160920'
         }
+    },
+    GpgpuFlowFieldParticlesScene: {
+        camera: {
+            fov: 35,
+            near: 0.1,
+            far: 100,
+            position: [0, 0, 16]
+        },
+        renderer: {
+            clearColor: '#29191f'
+        }
     }
 };
