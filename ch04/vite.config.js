@@ -5,7 +5,8 @@ export default {
     publicDir: '../static/',
     build: {
         outDir: '../dist/',
-        emptyOutDir: true
+        emptyOutDir: true,
+        target: 'esnext'
     },
     plugins: [
         glsl()

@@ -94,6 +94,8 @@ export default class Experience {
             world.update(delta, elapsed);
 
         }
+
+        // make sure worlds are updated before the final render scene
         this.renderer.update();
 
     }
