@@ -39,7 +39,7 @@ export default class Renderer {
 
         this.resize();
 
-        console.log(this.instance.capabilities.getMaxAnisotropy());
+        console.log(`max anisotropy supported: ${this.instance.capabilities.getMaxAnisotropy()}`);
 
     }
 

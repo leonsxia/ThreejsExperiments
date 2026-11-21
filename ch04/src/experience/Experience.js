@@ -24,6 +24,7 @@ import EarthScene from './world/scenes/shaderScenes/EarthScene';
 import ParticlesCursorAnimationScene from './world/scenes/shaderScenes/ParticlesCursorAnimationScene';
 import ParticlesMorphingScene from './world/scenes/shaderScenes/ParticlesMorphingScene';
 import GpgpuFlowFieldParticlesScene from './world/scenes/shaderScenes/GpgpuFlowFieldParticlesScene';
+import WobblySphereScene from './world/scenes/shaderScenes/WobblySphereScene';
 import Stats from 'stats.js';
 
 let instance = null;
@@ -47,7 +48,7 @@ export default class Experience {
         this.canvas = _canvas;
 
         // setup
-        this.sceneConfig = config.GpgpuFlowFieldParticlesScene;
+        this.sceneConfig = config.WobblySphereScene;
         this.debug = new Debug();
         this.sizes = new Sizes();
         this.scene = new Scene();
@@ -57,7 +58,7 @@ export default class Experience {
         this.time = new Time(this.renderer.instance);
         this.events = new Events();
         this.worlds = [
-            new GpgpuFlowFieldParticlesScene()
+            new WobblySphereScene()
         ];
 
         this.stats = new Stats();

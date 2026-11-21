@@ -159,5 +159,22 @@ export default [
         name: 'strandedBoat',
         type: 'gltfModel',
         path: 'models/boat/model.glb'
+    }, {
+        name: 'urbanAlleyHDR',
+        type: 'hdr',
+        path: 'textures/hdr/urban_alley_01_1k.hdr'
+    }, {
+        name:'suzanne2',
+        type: 'gltfModel',
+        path: 'models/suzanne/suzanne.glb'
+    }, {
+        name: 'metal168',
+        type: 'texture',
+        path: 'textures/walls/Texturelabs_Metal_168M.jpg'
+    },
+    {
+        name: 'metal168Normal',
+        type: 'texture',
+        path: 'textures/walls/Texturelabs_Metal_168L.jpg'
     }
 ];

@@ -226,5 +226,13 @@ export default {
         renderer: {
             clearColor: '#29191f'
         }
+    },
+    WobblySphereScene: {
+        camera: {
+            fov: 35,
+            near: 0.1,
+            far: 100,
+            position: [13, - 3, - 5]
+        },
     }
 };

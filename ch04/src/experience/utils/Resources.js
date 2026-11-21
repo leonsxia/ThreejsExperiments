@@ -2,6 +2,7 @@ import { TextureLoader, CubeTextureLoader } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader, DRACO_GLTF_CONFIG } from 'three/addons/loaders/DRACOLoader.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import EventEmitter from './EventEmitter';
 
 export default class Resourecs extends EventEmitter {
@@ -29,6 +30,7 @@ export default class Resourecs extends EventEmitter {
         this.loaders.gltfLoader = new GLTFLoader();        
         this.loaders.textureLoader = new TextureLoader();
         this.loaders.cubeTextureLoader = new CubeTextureLoader();
+        this.loaders.hdrLoader = new HDRLoader();
 
         // DRACO
         this.loaders.dracoLoader = new DRACOLoader();
@@ -62,6 +64,19 @@ export default class Resourecs extends EventEmitter {
                 case 'texture':
 
                     this.loaders.textureLoader
+                        .loadAsync(source.path)
+                        .then((file) => {
+
+                            this.sourceLoaded(source, file);
+
+                        }
+                    );
+
+                    break;
+
+                case 'hdr':
+
+                    this.loaders.hdrLoader
                         .loadAsync(source.path)
                         .then((file) => {
 
