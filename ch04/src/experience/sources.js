@@ -171,10 +171,25 @@ export default [
         name: 'metal168',
         type: 'texture',
         path: 'textures/walls/Texturelabs_Metal_168M.jpg'
-    },
-    {
+    }, {
         name: 'metal168Normal',
         type: 'texture',
         path: 'textures/walls/Texturelabs_Metal_168L.jpg'
+    }, {
+        name: 'damagedPlaster',
+        type: 'texture',
+        path: 'textures/walls/damaged_plaster_diff_2k.jpg'
+    }, {
+        name: 'damagedPasterNormal',
+        type: 'texture',
+        path: 'textures/walls/damaged_plaster_nor_gl_2k.jpg'
+    }, {
+        name: 'brickWall1',
+        type: 'texture',
+        path: 'textures/walls/brick_wall_001_diffuse_2k.jpg'
+    }, {
+        name: 'brickWall1Normal',
+        type: 'texture',
+        path: 'textures/walls/brick_wall_001_nor_gl_2k.jpg'
     }
 ];
