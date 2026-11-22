@@ -267,7 +267,7 @@ export default class WobblySphereScene extends World {
 
         this.virusUniforms.uTime.value = elapsed;
         this.silentHillUniforms.uTime.value = elapsed;
-        // this.plane.rotation.y += delta * 0.2;
+        // this.skinWall.rotation.y += delta * 0.2;
 
     }
 
