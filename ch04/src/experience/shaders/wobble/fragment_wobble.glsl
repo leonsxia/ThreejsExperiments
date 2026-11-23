@@ -6,10 +6,13 @@ uniform float uStrength;
 uniform float uWarpPositionFrequency;
 uniform float uWarpTimeFrequency;
 uniform float uWarpStrength;
+uniform float uFadeout;
+uniform float uPeakLevel;
+uniform float uVallyLevel;
 
 uniform vec3 uColorA;
 uniform vec3 uColorB;
-uniform float uWobbleLevel;
+uniform float uEffectLevel;
 
 varying vec3 vPosition;
 varying vec2 vUv;
@@ -42,7 +45,19 @@ void main()
     vec3 computedPosition = vPosition;
     computedPosition += wobble * vNormal;
     positionA += getWobble(positionA) * normalize(vNormal);
-    positionB += getWobble(positionB) * normalize(vNormal);
+    positionB += getWobble(positionB) * normalize(vNormal);    
+
+    // get original wobble since getWobble will divide uStrength at last
+    float finalWobble = wobble / uStrength;    
+    float colorMix = smoothstep(- 1.0, 1.0, finalWobble);
+    float finalMix = smoothstep(uFadeout * (2.0 - uPeakLevel) - (1.0 + 2.0 * uVallyLevel), 1.0, finalWobble);
+    // csm_DiffuseColor.rgb = mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uEffectLevel);
+    csm_DiffuseColor.rgb = mix(
+        csm_DiffuseColor.rgb,
+        mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uEffectLevel),
+        finalMix
+    );
+    // csm_DiffuseColor.a = finalMix;
 
     /**
     * normal
@@ -59,14 +74,11 @@ void main()
     vec3 computedNormal = cross(toA, toB);  //normalize((viewMatrix * vec4(cross(toA, toB), 0.0)).xyz);
 
     // mix normal map with computed normal
-    vec3 finalNormal = normalize(tNormal + mix(vec3(0.0), computedNormal, uWobbleLevel));
+    vec3 finalNormal = normalize(tNormal + mix(vec3(0.0), computedNormal, uEffectLevel));
 
     // assign final normal to output
-    csm_FragNormal = finalNormal;
-
-    float finalWobble = wobble / uStrength;
-    float colorMix = smoothstep(- 1.0, 1.0, finalWobble);
-    csm_DiffuseColor.rgb = mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uWobbleLevel);
+    // csm_FragNormal = finalNormal;
+    csm_FragNormal = normalize(mix(tNormal, finalNormal, finalMix));
 
     // test
     // csm_FragColor = vec4(tNormal, 1.0);
@@ -76,5 +88,7 @@ void main()
     // csm_Roughness = 1.0 - csm_Metalness;
 
     // shiny tip
-    csm_Roughness = mix(roughness, (1.0 - colorMix), uWobbleLevel);
+    csm_Roughness = mix(roughness, max(0.0, roughness - colorMix), uEffectLevel);
+
+    // float csm_Disappear;
 }

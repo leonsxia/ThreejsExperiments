@@ -49,7 +49,7 @@ export default class Experience {
         this.canvas = _canvas;
 
         // setup
-        this.sceneConfig = config.SlicedModelScene;
+        this.sceneConfig = config.WobblySphereScene;
         this.debug = new Debug();
         this.sizes = new Sizes();
         this.scene = new Scene();
@@ -59,7 +59,7 @@ export default class Experience {
         this.time = new Time(this.renderer.instance);
         this.events = new Events();
         this.worlds = [
-            new SlicedModelScene()
+            new WobblySphereScene()
         ];
 
         this.stats = new Stats();

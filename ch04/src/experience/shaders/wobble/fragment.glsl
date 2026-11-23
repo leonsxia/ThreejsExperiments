@@ -1,18 +1,18 @@
 uniform vec3 uColorA;
 uniform vec3 uColorB;
-uniform float uWobbleLevel;
+uniform float uEffectLevel;
 
 varying float vWobble;
 
 void main()
 {
     float colorMix = smoothstep(- 1.0, 1.0, vWobble);
-    csm_DiffuseColor.rgb = mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uWobbleLevel);
+    csm_DiffuseColor.rgb = mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uEffectLevel);
 
     // mirror step
     // csm_Metalness = step(0.25, vWobble);
     // csm_Roughness = 1.0 - csm_Metalness;
 
     // shiny tip
-    csm_Roughness = mix(roughness, (1.0 - colorMix), uWobbleLevel);
+    csm_Roughness = mix(roughness, (1.0 - colorMix), uEffectLevel);
 }

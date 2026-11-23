@@ -1,4 +1,4 @@
-import { Mesh, Uniform, Color, DirectionalLight, PlaneGeometry, MeshStandardMaterial, MeshPhysicalMaterial, IcosahedronGeometry, EquirectangularReflectionMapping, MeshDepthMaterial, DirectionalLightHelper, CameraHelper, DoubleSide } from 'three';
+import { Mesh, Uniform, Color, DirectionalLight, PlaneGeometry, MeshStandardMaterial, MeshPhysicalMaterial, IcosahedronGeometry, EquirectangularReflectionMapping, MeshDepthMaterial, DirectionalLightHelper, CameraHelper, DoubleSide, SRGBColorSpace } from 'three';
 import World from '../World';
 import vertexShader from '../../../shaders/wobble/vertex.glsl';
 import vertexNoWobbleShader from '../../../shaders/wobble/vertex_no_wobble.glsl';
@@ -21,6 +21,7 @@ export default class WobblySphereScene extends World {
         this.setParameters();
         this.setHDR();
         this.setLight();
+        this.setTextures();
         this.setMaterial();
         this.setProps();        
         this.setVirusMesh();
@@ -98,7 +99,33 @@ export default class WobblySphereScene extends World {
         this.skinWall.rotation.y = Math.PI;
         this.skinWall.position.set(0, - 5, 5);
 
+        this.backwall = new Mesh(
+            new PlaneGeometry(19.2, 12.8, segments, segments),
+            new MeshStandardMaterial({
+                map: this.resources.items.metal168,
+                normalMap: this.resources.items.metal168Normal
+            })
+        );
+        this.backwall.receiveShadow = true;
+        this.backwall.castShadow = true;
+        this.backwall.rotation.y = Math.PI;
+        this.backwall.position.set(0, - 5, 5.01);
+
         this.scene.add(this.skinWall);
+
+    }
+
+    setTextures() {
+
+        this.resources.items.metal168.anisotropy = 8;
+        this.resources.items.metal168.colorSpace = SRGBColorSpace;
+        this.resources.items.metal168Normal.anisotropy = 8;
+        this.resources.items.damagedPlaster.anisotropy = 8;
+        this.resources.items.damagedPlaster.colorSpace = SRGBColorSpace;
+        this.resources.items.damagedPasterNormal.anisotropy = 8;
+        this.resources.items.brickWall1.anisotropy = 8;
+        this.resources.items.brickWall1.colorSpace = SRGBColorSpace;
+        this.resources.items.brickWall1Normal.anisotropy = 8;
 
     }
 
@@ -114,7 +141,7 @@ export default class WobblySphereScene extends World {
             uWarpStrength: new Uniform(1.7),
             uColorA: new Uniform(new Color(this.virusObject.colorA)),
             uColorB: new Uniform(new Color(this.virusObject.colorB)),
-            uWobbleLevel: new Uniform(0.5)
+            uEffectLevel: new Uniform(0.5)
         };
 
         this.virusUniforms = {
@@ -127,7 +154,7 @@ export default class WobblySphereScene extends World {
             uWarpStrength: new Uniform(1.14),
             uColorA: new Uniform(new Color(this.virusObject.colorA)),
             uColorB: new Uniform(new Color(this.virusObject.colorB)),
-            uWobbleLevel: new Uniform(0.459)
+            uEffectLevel: new Uniform(0.459)
         };
 
         this.silentHillUniforms = {
@@ -140,7 +167,10 @@ export default class WobblySphereScene extends World {
             uWarpStrength: new Uniform(1.14),
             uColorA: new Uniform(new Color(this.skinWallObject.colorA)),
             uColorB: new Uniform(new Color(this.skinWallObject.colorB)),
-            uWobbleLevel: new Uniform(0.459)
+            uEffectLevel: new Uniform(0.459),
+            uFadeout: new Uniform(0),
+            uPeakLevel: new Uniform(0),
+            uVallyLevel: new Uniform(0)
         };
 
         this.virusMaterial = new CustomShaderMaterial({
@@ -160,23 +190,30 @@ export default class WobblySphereScene extends World {
             wireframe: false
         });
 
-        this.resources.items.metal168.anisotropy = 8;
-        this.resources.items.metal168Normal.anisotropy = 8;
-        this.resources.items.damagedPlaster.anisotropy = 8;
-        this.resources.items.damagedPasterNormal.anisotropy = 8;
-        this.resources.items.brickWall1.anisotropy = 8;
-        this.resources.items.brickWall1Normal.anisotropy = 8;
+        const patchMap = {
+            csm_Disappear: {
+                "#include <colorspace_fragment>":
+                `
+                    #include <colorspace_fragment>
+
+                    if (finalWobble < - 0.9 / uStrength)
+                        discard;
+                `
+            }
+        };
+
         this.skinWallMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
             vertexShader: vertexNoWobbleShader,
             fragmentShader: fragmentWobbleShader,
             uniforms: this.silentHillUniforms,
+            // patchMap,
             // MeshPhysicalMaterial
             metalness: 0,
             roughness: 0.5,
             color: '#ffffff',
-            transmission: 0.164,
+            transmission: 0,
             ior: 1.519,
             thickness: 2.257,
             transparent: true,
@@ -241,7 +278,7 @@ export default class WobblySphereScene extends World {
         this.virusShaderFolder.add(this.virusUniforms.uWarpStrength, 'value', 0, 2, .001).name('uWarpStrength');
         this.virusShaderFolder.addColor(this.virusObject, 'colorA').onChange(value => this.virusUniforms.uColorA.value.set(value));
         this.virusShaderFolder.addColor(this.virusObject, 'colorB').onChange(value => this.virusUniforms.uColorB.value.set(value));
-        this.virusShaderFolder.add(this.virusUniforms.uWobbleLevel, 'value', 0, 1, .001).name('uWobbleLevel');
+        this.virusShaderFolder.add(this.virusUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
 
         // skin wall
         this.skinWallFolder.add(this.skinWallMaterial, 'metalness', 0, 1, .001).listen();
@@ -256,10 +293,13 @@ export default class WobblySphereScene extends World {
         this.skinWallShaderFolder.add(this.silentHillUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
         this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
         this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpStrength, 'value', 0, 2, .001).name('uWarpStrength');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
         this.skinWallShaderFolder.addColor(this.skinWallObject, 'colorA').onChange(value => this.silentHillUniforms.uColorA.value.set(value));
         this.skinWallShaderFolder.addColor(this.skinWallObject, 'colorB').onChange(value => this.silentHillUniforms.uColorB.value.set(value));
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uWobbleLevel, 'value', 0, 1, .001).name('uWobbleLevel');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uPeakLevel, 'value', 0, 1, .001).name('uPeakLevel');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uVallyLevel, 'value', 0, 1, .001).name('uVallyLevel');
 
     }
 
