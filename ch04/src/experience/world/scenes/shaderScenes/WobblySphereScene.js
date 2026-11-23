@@ -169,8 +169,7 @@ export default class WobblySphereScene extends World {
             uColorB: new Uniform(new Color(this.skinWallObject.colorB)),
             uEffectLevel: new Uniform(0.459),
             uFadeout: new Uniform(0),
-            uPeakLevel: new Uniform(0),
-            uVallyLevel: new Uniform(0)
+            uDensity: new Uniform(0.5)
         };
 
         this.virusMaterial = new CustomShaderMaterial({
@@ -190,25 +189,12 @@ export default class WobblySphereScene extends World {
             wireframe: false
         });
 
-        const patchMap = {
-            csm_Disappear: {
-                "#include <colorspace_fragment>":
-                `
-                    #include <colorspace_fragment>
-
-                    if (finalWobble < - 0.9 / uStrength)
-                        discard;
-                `
-            }
-        };
-
         this.skinWallMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
             vertexShader: vertexNoWobbleShader,
             fragmentShader: fragmentWobbleShader,
             uniforms: this.silentHillUniforms,
-            // patchMap,
             // MeshPhysicalMaterial
             metalness: 0,
             roughness: 0.6,
@@ -298,8 +284,7 @@ export default class WobblySphereScene extends World {
         this.skinWallShaderFolder.addColor(this.skinWallObject, 'colorB').onChange(value => this.silentHillUniforms.uColorB.value.set(value));
         this.skinWallShaderFolder.add(this.silentHillUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
         this.skinWallShaderFolder.add(this.silentHillUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uPeakLevel, 'value', 0, 1, .001).name('uPeakLevel');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uVallyLevel, 'value', 0, 1, .001).name('uVallyLevel');
+        this.skinWallShaderFolder.add(this.silentHillUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
 
     }
 

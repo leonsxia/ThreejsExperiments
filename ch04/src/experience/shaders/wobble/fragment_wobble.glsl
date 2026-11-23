@@ -7,8 +7,7 @@ uniform float uWarpPositionFrequency;
 uniform float uWarpTimeFrequency;
 uniform float uWarpStrength;
 uniform float uFadeout;
-uniform float uPeakLevel;
-uniform float uVallyLevel;
+uniform float uDensity;
 
 uniform vec3 uColorA;
 uniform vec3 uColorB;
@@ -50,7 +49,7 @@ void main()
     // get original wobble since getWobble will divide uStrength at last
     float finalWobble = wobble / uStrength;    
     float colorMix = smoothstep(- 1.0, 1.0, finalWobble);
-    float finalMix = smoothstep(uFadeout * (2.0 - uPeakLevel) - (1.0 + 2.0 * uVallyLevel), 1.0, finalWobble);
+    float finalMix = smoothstep(min(- uDensity, 0.0), max(0.0, uFadeout), finalWobble);
     // csm_DiffuseColor.rgb = mix(csm_DiffuseColor.rgb, mix(uColorA, uColorB, colorMix), uEffectLevel);
     csm_DiffuseColor.rgb = mix(
         csm_DiffuseColor.rgb,
@@ -89,6 +88,4 @@ void main()
 
     // shiny tip
     csm_Roughness = mix(roughness, max(0.0, roughness - colorMix), uEffectLevel);
-
-    // float csm_Disappear;
 }
