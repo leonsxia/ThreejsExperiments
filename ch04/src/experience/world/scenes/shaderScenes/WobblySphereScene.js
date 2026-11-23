@@ -50,7 +50,7 @@ export default class WobblySphereScene extends World {
 
         this.skinWallObject = {
             colorA: '#e6b084',
-            colorB: '#f40b0b'
+            colorB: '#8f0f0f'
         };
 
     }
@@ -211,7 +211,7 @@ export default class WobblySphereScene extends World {
             // patchMap,
             // MeshPhysicalMaterial
             metalness: 0,
-            roughness: 0.5,
+            roughness: 0.6,
             color: '#ffffff',
             transmission: 0,
             ior: 1.519,
