@@ -234,5 +234,13 @@ export default {
             far: 100,
             position: [13, - 3, - 5]
         },
+    },
+    SlicedModelScene: {
+        camera: {
+            fov: 35,
+            near: 0.1,
+            far: 100,
+            position: [- 5, 5, 12]
+        }
     }
 };

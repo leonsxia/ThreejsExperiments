@@ -191,5 +191,13 @@ export default [
         name: 'brickWall1Normal',
         type: 'texture',
         path: 'textures/walls/brick_wall_001_nor_gl_2k.jpg'
+    }, {
+        name: 'aerodynamicsWorkshopHDR',
+        type: 'hdr',
+        path: 'textures/hdr/aerodynamics_workshop.hdr'
+    }, {
+        name: 'gears',
+        type: 'gltfModel',
+        path: 'models/gears.glb'
     }
 ];
