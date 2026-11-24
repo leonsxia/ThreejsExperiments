@@ -6,7 +6,10 @@ import vertexNoTangentDefinedShader from '../../../shaders/wobble/vertex_no_tang
 import fragmentWobbleShader from '../../../shaders/wobble/fragment_wobble.glsl';
 import fragmentShader from '../../../shaders/wobble/fragment.glsl';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
-import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeVertices, computeMikkTSpaceTangents } from 'three/addons/utils/BufferGeometryUtils.js';
+import * as MikkTSpace from 'three/addons/libs/mikktspace.module.js';
+
+await MikkTSpace.ready;
 
 export default class WobblySphereScene extends World {
 
@@ -73,7 +76,7 @@ export default class WobblySphereScene extends World {
 
     setLight() {
 
-        this.directionalLight = new DirectionalLight('#ffffff', 3);
+        this.directionalLight = new DirectionalLight('#ffffff', 1);
         this.directionalLight.castShadow = true;
         this.directionalLight.shadow.mapSize.set(1024, 1024);
         this.directionalLight.shadow.camera.far = 50;
@@ -292,9 +295,14 @@ export default class WobblySphereScene extends World {
     setMan() {
 
         this.man = this.resources.items.leePerrySmithModel.scene.children[0];
-        this.man.geometry = mergeVertices(this.man.geometry);
-        this.man.geometry.computeTangents();
+        // this.man.geometry = mergeVertices(this.man.geometry);
+        // this.man.geometry.computeTangents();
         this.man.material = this.skinMaterial;
+        if (this.man.geometry.attributes['uv'] && this.man.material.normalMap && !this.man.geometry.attributes['tangent']) {
+
+            computeMikkTSpaceTangents(this.man.geometry, MikkTSpace, false);
+
+        }
         this.man.receiveShadow = true;
         this.man.castShadow = true;
         this.man.rotation.y = Math.PI * .5;
