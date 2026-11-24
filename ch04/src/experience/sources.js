@@ -199,5 +199,9 @@ export default [
         name: 'gears',
         type: 'gltfModel',
         path: 'models/gears.glb'
+    }, {
+        name: 'spruitSunriseHDR',
+        type: 'hdr',
+        path: 'textures/hdr/spruit_sunrise.hdr'
     }
 ];

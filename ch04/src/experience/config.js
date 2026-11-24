@@ -242,5 +242,13 @@ export default {
             far: 100,
             position: [- 5, 5, 12]
         }
+    },
+    ProceduralTerrainScene: {
+        camera: {
+            fov: 35,
+            near: 0.1,
+            far: 100,
+            position: [- 10, 6, - 2]
+        }
     }
 };
