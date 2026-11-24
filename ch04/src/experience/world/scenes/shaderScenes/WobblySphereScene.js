@@ -26,6 +26,7 @@ export default class WobblySphereScene extends World {
         this.setProps();        
         this.setVirusMesh();
         // this.setWobbleModel();
+        this.setMan();
 
         // debug
         if (this.debug.active) {
@@ -33,7 +34,9 @@ export default class WobblySphereScene extends World {
             this.VirusFolder = this.debug.ui.addFolder('Virus');
             this.virusShaderFolder = this.VirusFolder.addFolder('Shader');
             this.skinWallFolder = this.debug.ui.addFolder('Skin Wall');
-            this.skinWallShaderFolder = this.skinWallFolder.addFolder('Shader');            
+            this.skinWallShaderFolder = this.skinWallFolder.addFolder('Shader');   
+            this.manFolder = this.debug.ui.addFolder('Man');
+            this.manSkinShaderFolder = this.manFolder.addFolder('Shader');
 
             this.setGui();
 
@@ -51,6 +54,11 @@ export default class WobblySphereScene extends World {
         this.skinWallObject = {
             colorA: '#e6b084',
             colorB: '#8f0f0f'
+        };
+
+        this.skinObject = {
+            colorA: '#e6b084',
+            colorB: '#981616'
         };
 
     }
@@ -126,6 +134,7 @@ export default class WobblySphereScene extends World {
         this.resources.items.brickWall1.anisotropy = 8;
         this.resources.items.brickWall1.colorSpace = SRGBColorSpace;
         this.resources.items.brickWall1Normal.anisotropy = 8;
+        this.resources.items.leePerrySmithColorTexture.colorSpace = SRGBColorSpace;
 
     }
 
@@ -172,6 +181,21 @@ export default class WobblySphereScene extends World {
             uDensity: new Uniform(0.5)
         };
 
+        this.skinUniforms = {
+            uTime: new Uniform(0),
+            uPositionFrequency: new Uniform(0.615),
+            uTimeFrequency: new Uniform(0.255),
+            uStrength: new Uniform(0.673),
+            uWarpPositionFrequency: new Uniform(1.945),
+            uWarpTimeFrequency: new Uniform(0.29),
+            uWarpStrength: new Uniform(0.927),
+            uColorA: new Uniform(new Color(this.skinObject.colorA)),
+            uColorB: new Uniform(new Color(this.skinObject.colorB)),
+            uEffectLevel: new Uniform(0.851),
+            uFadeout: new Uniform(0.674),
+            uDensity: new Uniform(0.566)
+        };
+
         this.virusMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
@@ -209,6 +233,25 @@ export default class WobblySphereScene extends World {
             side: DoubleSide
         });
 
+        this.skinMaterial = new CustomShaderMaterial({
+            // CSM
+            baseMaterial: MeshPhysicalMaterial,
+            vertexShader: vertexNoWobbleShader,
+            fragmentShader: fragmentWobbleShader,
+            uniforms: this.skinUniforms,
+            // MeshPhysicalMaterial
+            metalness: 0,
+            roughness: 1,
+            color: '#ffffff',
+            transmission: 0,
+            ior: 1.519,
+            thickness: 2.257,
+            transparent: true,
+            wireframe: false,
+            map: this.resources.items.leePerrySmithColorTexture,
+            normalMap: this.resources.items.leePerrySmithNormalTexture
+        });
+
         this.depthMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshDepthMaterial,
@@ -243,6 +286,21 @@ export default class WobblySphereScene extends World {
         this.wobble.position.set(- 10, 0, - 3);
 
         this.scene.add(this.wobble);
+
+    }
+
+    setMan() {
+
+        this.man = this.resources.items.leePerrySmithModel.scene.children[0];
+        this.man.geometry = mergeVertices(this.man.geometry);
+        this.man.geometry.computeTangents();
+        this.man.material = this.skinMaterial;
+        this.man.receiveShadow = true;
+        this.man.castShadow = true;
+        this.man.rotation.y = Math.PI * .5;
+        this.man.position.set(0, - 5, 0);
+
+        this.scene.add(this.man);
 
     }
 
@@ -286,13 +344,35 @@ export default class WobblySphereScene extends World {
         this.skinWallShaderFolder.add(this.silentHillUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
         this.skinWallShaderFolder.add(this.silentHillUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
 
+        // man skin
+        this.manFolder.add(this.skinMaterial, 'metalness', 0, 1, .001).listen();
+        this.manFolder.add(this.skinMaterial, 'roughness', 0, 1, .001).listen();
+        this.manFolder.add(this.skinMaterial, 'transmission', 0, 1, .001);
+        this.manFolder.add(this.skinMaterial, 'ior', 0, 10, .001);
+        this.manFolder.add(this.skinMaterial, 'thickness', 0, 10, .001);
+        this.manFolder.addColor(this.skinMaterial, 'color');
+
+        this.manSkinShaderFolder.add(this.skinUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
+        this.manSkinShaderFolder.add(this.skinUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
+        this.manSkinShaderFolder.add(this.skinUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
+        this.manSkinShaderFolder.add(this.skinUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
+        this.manSkinShaderFolder.add(this.skinUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
+        this.manSkinShaderFolder.add(this.skinUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
+        this.manSkinShaderFolder.addColor(this.skinObject, 'colorA').onChange(value => this.skinUniforms.uColorA.value.set(value));
+        this.manSkinShaderFolder.addColor(this.skinObject, 'colorB').onChange(value => this.skinUniforms.uColorB.value.set(value));
+        this.manSkinShaderFolder.add(this.skinUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
+        this.manSkinShaderFolder.add(this.skinUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
+        this.manSkinShaderFolder.add(this.skinUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
+
     }
 
     tick(delta, elapsed) {
 
         this.virusUniforms.uTime.value = elapsed;
         this.silentHillUniforms.uTime.value = elapsed;
+        this.skinUniforms.uTime.value = elapsed;
         // this.skinWall.rotation.y += delta * 0.2;
+        this.man.rotation.y += delta * 0.1;
 
     }
 

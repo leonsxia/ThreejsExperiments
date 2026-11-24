@@ -32,8 +32,6 @@ float getWobble(vec3 position)
 
 void main()
 {
-    // vec3 biTangent = cross(vNormal, vTangent);
-
     // neighbours positions
     float shift = 0.01;
     vec3 positionA = vPosition + normalize(vTangent) * shift;
@@ -62,9 +60,12 @@ void main()
     * normal
     */
     // normal map in tangent space
-    vec3 mapNor = normalize(texture(normalMap, vUv).xyz) * 2.0 - 1.0;
+    vec3 nor = normalize(vNormal);
+    nor *= gl_FrontFacing ? 1.0 : - 1.0;
+
+    vec3 mapNor = texture(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
     mapNor.xy *= normalScale;
-    mat3 cTBN = mat3(normalize(vTangent), normalize(vBitangent), normalize(vNormal));
+    mat3 cTBN = mat3(normalize(vTangent), normalize(vBitangent), nor);
 	vec3 tNormal = normalize(cTBN * mapNor);
 
     // computed normal
@@ -78,13 +79,12 @@ void main()
     // assign final normal to output
     // csm_FragNormal = finalNormal;
     csm_FragNormal = normalize(mix(tNormal, finalNormal, finalMix));
+    // test
+    // csm_FragNormal = tNormal;
 
     // test
     // csm_FragColor = vec4(tNormal, 1.0);
-
-    // mirror step
-    // csm_Metalness = step(0.25, wobble);
-    // csm_Roughness = 1.0 - csm_Metalness;
+    // csm_FragColor = vec4(vUv, 1.0, 1.0);
 
     // shiny tip
     csm_Roughness = mix(roughness, max(0.0, roughness - colorMix), uEffectLevel);
