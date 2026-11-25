@@ -1,4 +1,4 @@
-#include '../includes/simplexNoise4d.glsl'
+#include '../../includes/simplexNoise4d.glsl'
 
 uniform float uTime;
 uniform float uPositionFrequency;
@@ -7,8 +7,6 @@ uniform float uStrength;
 uniform float uWarpPositionFrequency;
 uniform float uWarpTimeFrequency;
 uniform float uWarpStrength;
-
-attribute vec4 tangent;
 
 varying float vWobble;
 

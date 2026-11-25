@@ -1,17 +1,17 @@
 import { Mesh, Uniform, Color, DirectionalLight, PlaneGeometry, MeshStandardMaterial, MeshPhysicalMaterial, IcosahedronGeometry, EquirectangularReflectionMapping, MeshDepthMaterial, DirectionalLightHelper, CameraHelper, DoubleSide, SRGBColorSpace } from 'three';
 import World from '../World';
-import vertexShader from '../../../shaders/wobble/vertex.glsl';
-import vertexNoWobbleShader from '../../../shaders/wobble/vertex_no_wobble.glsl';
-import vertexNoTangentDefinedShader from '../../../shaders/wobble/vertex_no_tangent_defined.glsl';
-import fragmentWobbleShader from '../../../shaders/wobble/fragment_wobble.glsl';
-import fragmentShader from '../../../shaders/wobble/fragment.glsl';
+import vertexMutatedVertexShader from '../../../shaders/mutatedSkin/vertex_mutated/vertex.glsl';
+import vertexMutatedFragmentShader from '../../../shaders/mutatedSkin/vertex_mutated/fragment.glsl';
+import vertexMutatedNoTangentDefinedShader from '../../../shaders/mutatedSkin/vertex_mutated/vertex_no_tangent_defined.glsl';
+import fragmentMutatedVertexShader from '../../../shaders/mutatedSkin/fragment_mutated/vertex.glsl';
+import fragmentMutatedFragmentShader from '../../../shaders/mutatedSkin/fragment_mutated/fragment.glsl';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import { mergeVertices, computeMikkTSpaceTangents } from 'three/addons/utils/BufferGeometryUtils.js';
 import * as MikkTSpace from 'three/addons/libs/mikktspace.module.js';
 
 await MikkTSpace.ready;
 
-export default class WobblySphereScene extends World {
+export default class MutatedSkinScene extends World {
 
     constructor() {
 
@@ -202,8 +202,8 @@ export default class WobblySphereScene extends World {
         this.virusMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
-            vertexShader,
-            fragmentShader,
+            vertexShader: vertexMutatedVertexShader,
+            fragmentShader: vertexMutatedFragmentShader,
             uniforms: this.virusUniforms,
             // MeshPhysicalMaterial
             metalness: 0,
@@ -219,8 +219,8 @@ export default class WobblySphereScene extends World {
         this.skinWallMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
-            vertexShader: vertexNoWobbleShader,
-            fragmentShader: fragmentWobbleShader,
+            vertexShader: fragmentMutatedVertexShader,
+            fragmentShader: fragmentMutatedFragmentShader,
             uniforms: this.silentHillUniforms,
             // MeshPhysicalMaterial
             metalness: 0,
@@ -239,8 +239,8 @@ export default class WobblySphereScene extends World {
         this.skinMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshPhysicalMaterial,
-            vertexShader: vertexNoWobbleShader,
-            fragmentShader: fragmentWobbleShader,
+            vertexShader: fragmentMutatedVertexShader,
+            fragmentShader: fragmentMutatedFragmentShader,
             uniforms: this.skinUniforms,
             // MeshPhysicalMaterial
             metalness: 0,
@@ -258,7 +258,7 @@ export default class WobblySphereScene extends World {
         this.depthMaterial = new CustomShaderMaterial({
             // CSM
             baseMaterial: MeshDepthMaterial,
-            vertexShader,
+            vertexShader: vertexMutatedVertexShader,
             uniforms: this.virusUniforms
         });
 

@@ -24,7 +24,7 @@ import EarthScene from './world/scenes/shaderScenes/EarthScene';
 import ParticlesCursorAnimationScene from './world/scenes/shaderScenes/ParticlesCursorAnimationScene';
 import ParticlesMorphingScene from './world/scenes/shaderScenes/ParticlesMorphingScene';
 import GpgpuFlowFieldParticlesScene from './world/scenes/shaderScenes/GpgpuFlowFieldParticlesScene';
-import WobblySphereScene from './world/scenes/shaderScenes/WobblySphereScene';
+import MutatedSkinScene from './world/scenes/shaderScenes/MutatedSkinScene';
 import SlicedModelScene from './world/scenes/shaderScenes/SlicedModelScene';
 import ProceduralTerrainScene from './world/scenes/shaderScenes/ProceduralTerrainScene';
 import Stats from 'stats.js';
@@ -50,7 +50,7 @@ export default class Experience {
         this.canvas = _canvas;
 
         // setup
-        this.sceneConfig = config.ProceduralTerrainScene;
+        this.sceneConfig = config.MutatedSkinScene;
         this.debug = new Debug();
         this.sizes = new Sizes();
         this.scene = new Scene();
@@ -60,7 +60,7 @@ export default class Experience {
         this.time = new Time(this.renderer.instance);
         this.events = new Events();
         this.worlds = [
-            new ProceduralTerrainScene()
+            new MutatedSkinScene()
         ];
 
         this.stats = new Stats();

@@ -227,7 +227,7 @@ export default {
             clearColor: '#29191f'
         }
     },
-    WobblySphereScene: {
+    MutatedSkinScene: {
         camera: {
             fov: 35,
             near: 0.1,

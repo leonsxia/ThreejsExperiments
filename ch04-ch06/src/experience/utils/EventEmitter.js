@@ -133,9 +133,6 @@ export default class EventEmitter {
 
         }
 
-        let finalResult = null;
-        let result = null;
-
         // resolve names (should on have one event)
         let name = this.resolveNames(_name);
 
@@ -153,13 +150,7 @@ export default class EventEmitter {
                     for (let i = 0, il = this.callbacks[namespace][name.value].length; i < il; i++) {
 
                         const callback = this.callbacks[namespace][name.value][i];
-                        result = callback.apply(this, _args);
-
-                        if (typeof finalResult === 'undefined') {
-
-                            finalResult = result;
-
-                        }
+                        callback.apply(this, _args);
 
                     }
 
@@ -179,13 +170,7 @@ export default class EventEmitter {
             for (let i = 0, il = this.callbacks[name.namespace][name.value].length; i < il; i++) {
 
                 const callback = this.callbacks[name.namespace][name.value][i];
-                result = callback.apply(this, _args);
-
-                if (typeof finalResult === 'undefined') {
-
-                    finalResult = result;
-
-                }
+                callback.apply(this, _args);
 
             }
 
