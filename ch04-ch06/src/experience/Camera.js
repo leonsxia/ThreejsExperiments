@@ -27,8 +27,10 @@ export default class Camera {
 
     setControls() {
 
+        const { target = [0, 0, 0] } = this.specs.camera ?? {};
         this.controls = new OrbitControls(this.instance, this.canvas);
         this.controls.enableDamping = true;
+        this.controls.target.set(...target);
 
     }
 
