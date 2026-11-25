@@ -7,9 +7,9 @@ const v0 = new Vector3();
 
 export default class LightsShadingScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();        
+        super(specs);        
 
         this.debugObject = {
             color: '#ffffff'
@@ -25,19 +25,16 @@ export default class LightsShadingScene extends World {
         this.setObjects();
         this.setLightHelpers();
 
-        // debug
-        if (this.debug.active) {
+    }
+    
+    setDebugParameters() {
 
-            this.debugFolder = this.debug.ui.addFolder('Shader Lights');
-            
-            this.ambientLightFolder = this.debug.ui.addFolder('Ambient Light');
-            this.directionalLightFolder = this.debug.ui.addFolder('Directional Light');
-            this.pointLight1Folder = this.debug.ui.addFolder('Point Light 1');
-            this.pointLight2Folder = this.debug.ui.addFolder('Point Light 2');
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Shader Lights');
 
-            this.setGui();
-
-        }
+        this.debugGui.ambientLightFolder = this.debug.ui.addFolder('Ambient Light');
+        this.debugGui.directionalLightFolder = this.debug.ui.addFolder('Directional Light');
+        this.debugGui.pointLight1Folder = this.debug.ui.addFolder('Point Light 1');
+        this.debugGui.pointLight2Folder = this.debug.ui.addFolder('Point Light 2');
 
     }
 
@@ -175,83 +172,83 @@ export default class LightsShadingScene extends World {
 
     setGui() {
 
-        this.debugFolder.addColor(this.debugObject, 'color').name('mesh material color')
+        this.debugGui.debugFolder.addColor(this.debugObject, 'color').name('mesh material color')
             .onChange(value => this.material.uniforms.uColor.value.set(value));
 
-        this.ambientLightFolder.addColor(this.ambientLight, 'color')
+        this.debugGui.ambientLightFolder.addColor(this.ambientLight, 'color')
             .onChange(value => this.material.uniforms.uAmbientColor.value.set(value));
-        this.ambientLightFolder.add(this.ambientLight, 'intensity', 0, 10, .01)
+        this.debugGui.ambientLightFolder.add(this.ambientLight, 'intensity', 0, 10, .01)
             .onChange(value => this.material.uniforms.uAmbientIntensity.value = value);
 
-        this.directionalLightFolder.addColor(this.directionalLight, 'color')
+        this.debugGui.directionalLightFolder.addColor(this.directionalLight, 'color')
             .onChange(value => {
                 this.material.uniforms.uDirectionalColor.value.set(value);
                 this.directionalLightHelper.material.color.set(value);
             });
-        this.directionalLightFolder.add(this.directionalLight, 'intensity', 0, 20, .01)
+        this.debugGui.directionalLightFolder.add(this.directionalLight, 'intensity', 0, 20, .01)
             .onChange(value => this.material.uniforms.uDirectionalIntensity.value = value);
-        this.directionalLightFolder.add(this.directionalLight, 'specular', 0, 50, 1)
+        this.debugGui.directionalLightFolder.add(this.directionalLight, 'specular', 0, 50, 1)
             .onChange(value => this.material.uniforms.uDirectionalSpecular.value = value);
-        this.directionalLightFolder.add(this.directionalLight.position, 'x', - 5, 5, .01).name('position.x')
+        this.debugGui.directionalLightFolder.add(this.directionalLight.position, 'x', - 5, 5, .01).name('position.x')
             .onChange(value => {
                 this.directionalLightHelper.position.x = value;
                 this.directionalLightHelper.lookAt(v0);
             });
-        this.directionalLightFolder.add(this.directionalLight.position, 'y', - 5, 5, .01).name('position.y')
+        this.debugGui.directionalLightFolder.add(this.directionalLight.position, 'y', - 5, 5, .01).name('position.y')
             .onChange(value => {
                 this.directionalLightHelper.position.y = value;
                 this.directionalLightHelper.lookAt(v0);
             });
-        this.directionalLightFolder.add(this.directionalLight.position, 'z', - 5, 5, .01).name('position.z')
+        this.debugGui.directionalLightFolder.add(this.directionalLight.position, 'z', - 5, 5, .01).name('position.z')
             .onChange(value => {
                 this.directionalLightHelper.position.z = value;
                 this.directionalLightHelper.lookAt(v0);
             });
 
-        this.pointLight1Folder.addColor(this.pointLight1, 'color')
+        this.debugGui.pointLight1Folder.addColor(this.pointLight1, 'color')
             .onChange(value => {
                 this.material.uniforms.uPoint1Color.value.set(value);
                 this.pointLightHelper1.material.color.set(value);
             });
-        this.pointLight1Folder.add(this.pointLight1, 'intensity', 0, 20, .01)
+        this.debugGui.pointLight1Folder.add(this.pointLight1, 'intensity', 0, 20, .01)
             .onChange(value => this.material.uniforms.uPoint1Intensity.value = value);
-        this.pointLight1Folder.add(this.pointLight1, 'specular', 0, 50, 1)
+        this.debugGui.pointLight1Folder.add(this.pointLight1, 'specular', 0, 50, 1)
             .onChange(value => this.material.uniforms.uPoint1Specular.value = value);
-        this.pointLight1Folder.add(this.pointLight1, 'radius', 0, 20, .01)
+        this.debugGui.pointLight1Folder.add(this.pointLight1, 'radius', 0, 20, .01)
             .onChange(value => this.material.uniforms.uPoint1Radius.value = value);
-        this.pointLight1Folder.add(this.pointLight1.position, 'x', - 5, 5, .01).name('position.x')
+        this.debugGui.pointLight1Folder.add(this.pointLight1.position, 'x', - 5, 5, .01).name('position.x')
             .onChange(value => {
                 this.pointLightHelper1.position.x = value;
             });
-        this.pointLight1Folder.add(this.pointLight1.position, 'y', - 5, 5, .01).name('position.y')
+        this.debugGui.pointLight1Folder.add(this.pointLight1.position, 'y', - 5, 5, .01).name('position.y')
             .onChange(value => {
                 this.pointLightHelper1.position.y = value;
             });
-        this.pointLight1Folder.add(this.pointLight1.position, 'z', - 5, 5, .01).name('position.z')
+        this.debugGui.pointLight1Folder.add(this.pointLight1.position, 'z', - 5, 5, .01).name('position.z')
             .onChange(value => {
                 this.pointLightHelper1.position.z = value;
             });
 
-        this.pointLight2Folder.addColor(this.pointLight2, 'color')
+        this.debugGui.pointLight2Folder.addColor(this.pointLight2, 'color')
             .onChange(value => {
                 this.material.uniforms.uPoint2Color.value.set(value);
                 this.pointLightHelper2.material.color.set(value);
             });
-        this.pointLight2Folder.add(this.pointLight2, 'intensity', 0, 20, .01)
+        this.debugGui.pointLight2Folder.add(this.pointLight2, 'intensity', 0, 20, .01)
             .onChange(value => this.material.uniforms.uPoint2Intensity.value = value);
-         this.pointLight2Folder.add(this.pointLight2, 'specular', 0, 50, 1)
+        this.debugGui.pointLight2Folder.add(this.pointLight2, 'specular', 0, 50, 1)
             .onChange(value => this.material.uniforms.uPoint2Specular.value = value);
-        this.pointLight2Folder.add(this.pointLight2, 'radius', 0, 20, .01)
+        this.debugGui.pointLight2Folder.add(this.pointLight2, 'radius', 0, 20, .01)
             .onChange(value => this.material.uniforms.uPoint2Radius.value = value);
-        this.pointLight2Folder.add(this.pointLight2.position, 'x', - 5, 5, .01).name('position.x')
+        this.debugGui.pointLight2Folder.add(this.pointLight2.position, 'x', - 5, 5, .01).name('position.x')
             .onChange(value => {
                 this.pointLightHelper2.position.x = value;
             });
-        this.pointLight2Folder.add(this.pointLight2.position, 'y', - 5, 5, .01).name('position.y')
+        this.debugGui.pointLight2Folder.add(this.pointLight2.position, 'y', - 5, 5, .01).name('position.y')
             .onChange(value => {
                 this.pointLightHelper2.position.y = value;
             });
-        this.pointLight2Folder.add(this.pointLight2.position, 'z', - 5, 5, .01).name('position.z')
+        this.debugGui.pointLight2Folder.add(this.pointLight2.position, 'z', - 5, 5, .01).name('position.z')
             .onChange(value => {
                 this.pointLightHelper2.position.z = value;
             });

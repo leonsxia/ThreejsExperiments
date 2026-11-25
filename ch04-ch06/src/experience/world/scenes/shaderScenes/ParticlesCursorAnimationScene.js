@@ -5,9 +5,9 @@ import fragmentShader from '../../../shaders/particlesCursorAnimation/fragment.g
 
 export default class ParticlesCursorAnimationScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -19,24 +19,37 @@ export default class ParticlesCursorAnimationScene extends World {
 
     }
 
+    alive() {
+
+        super.alive();
+        document.body.append(this.canvas);
+
+    }
+
+    suspend() {
+
+        super.suspend();
+        this.canvas.remove();
+
+    }
+
     setParameters() {
 
         // 2D canvas
-        const canvas = document.createElement('canvas');
-        canvas.width = 128;
-        canvas.height = 128;
-        canvas.style.position = 'fixed';
-        canvas.style.width = '256px';
-        canvas.style.height = '256px';
-        canvas.style.top = '48px';
-        canvas.style.left = 0;
-        canvas.style.zIndex = 10;
-        document.body.append(canvas);
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = 128;
+        this.canvas.height = 128;
+        this.canvas.style.position = 'fixed';
+        this.canvas.style.width = '256px';
+        this.canvas.style.height = '256px';
+        this.canvas.style.top = '48px';
+        this.canvas.style.left = 0;
+        this.canvas.style.zIndex = 10;        
 
         // displacement
         this.displacement = {
-            canvas,
-            context: canvas.getContext('2d'),
+            canvas: this.canvas,
+            context: this.canvas.getContext('2d'),
             glowImage: this.resources.items.glow,
             interactivePlane: new Mesh(
                 new PlaneGeometry(10, 10),
@@ -45,10 +58,10 @@ export default class ParticlesCursorAnimationScene extends World {
             raycaster: new Raycaster(),
             canvasCursor: new Vector2(9999, 9999),
             canvasCursorPrevious: new Vector2(9999, 9999),
-            texture: new CanvasTexture(canvas)
+            texture: new CanvasTexture(this.canvas)
         };
 
-        this.displacement.context.fillRect(0, 0, canvas.width, canvas.height);
+        this.displacement.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.displacement.interactivePlane.visible = false;
         this.scene.add(this.displacement.interactivePlane);
@@ -72,7 +85,7 @@ export default class ParticlesCursorAnimationScene extends World {
         this.particleGeometry.setIndex(null);
         this.particleGeometry.deleteAttribute('normal');
         this.intensitiesArray = [];
-        this.anglesArray = []
+        this.anglesArray = [];
 
         for (let i = 0; i < this.particleGeometry.attributes.position.count; i++) {
 
@@ -135,7 +148,7 @@ export default class ParticlesCursorAnimationScene extends World {
     tick(delta, elapsed) {
 
         const { canvas, raycaster, canvasCursor, interactivePlane } = this.displacement;
-        raycaster.setFromCamera(this.events.screenCursor, this.camera);
+        raycaster.setFromCamera(this.events.screenCursor, this.camera.instance);
         const intersections = raycaster.intersectObject(interactivePlane);
 
         if (intersections.length) {

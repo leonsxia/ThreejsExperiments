@@ -7,16 +7,15 @@ export default class ShaderPatternScene extends World {
 
     name = 'ShaderPatternScene';
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);        
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.debugFolder = this.debug.ui.addFolder('Shader');
+    setDebugParameters() {
 
-        }
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Shader');
 
     }
 

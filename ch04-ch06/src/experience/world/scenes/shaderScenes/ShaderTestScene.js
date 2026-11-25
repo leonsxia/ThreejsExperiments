@@ -7,16 +7,9 @@ export default class ShaderTestScene extends World {
 
     name = 'ShaderTestScene';
 
-    constructor() {
+    constructor(specs) {
 
-        super();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder('Shader');
-
-        }
+        super(specs);        
 
     }
 
@@ -25,6 +18,12 @@ export default class ShaderTestScene extends World {
         this.initGeometry();
         this.initMaterial();
         this.initMesh();
+
+    }
+
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Shader');
 
     }
 
@@ -59,15 +58,19 @@ export default class ShaderTestScene extends World {
             side: DoubleSide
         });
 
-        this.debugFolder.add(this.material.uniforms.uFrequency.value, 'x', 0, 20, .01).name('frequency x');
-        this.debugFolder.add(this.material.uniforms.uFrequency.value, 'y', 0, 20, .01).name('frequency y');
-
     }
 
     initMesh() {
 
         this.mesh = new Mesh(this.geometry, this.material);
         this.scene.add(this.mesh);
+
+    }
+
+    setGui() {
+
+        this.debugGui.debugFolder.add(this.material.uniforms.uFrequency.value, 'x', 0, 20, .01).name('frequency x');
+        this.debugGui.debugFolder.add(this.material.uniforms.uFrequency.value, 'y', 0, 20, .01).name('frequency y');
 
     }
 

@@ -5,14 +5,14 @@ import fragmentShader from '../../../shaders/demonicSea/fragment.glsl';
 
 export default class DemonicSea extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
         this.seaParameters = {
             depthColor: '#ff4000',
             surfaceColor: '#151c37'
-        };        
+        };
 
     }
 
@@ -21,17 +21,14 @@ export default class DemonicSea extends World {
         this.setLightWithHelper();
         this.setGeometry();
         this.setMaterial();
-        this.setMesh();        
+        this.setMesh();
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.debugFolder = this.debug.ui.addFolder('Demonic Sea');
-            this.lightFolder = this.debug.ui.addFolder('Lights');
+    setDebugParameters() {
 
-            this.setGui();
-
-        }
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Demonic Sea');
+        this.debugGui.lightFolder = this.debug.ui.addFolder('Lights');
 
     }
 
@@ -130,46 +127,46 @@ export default class DemonicSea extends World {
 
     setGui() {
 
-        this.debugFolder.addColor(this.seaParameters, 'depthColor').name('depth color')
+        this.debugGui.debugFolder.addColor(this.seaParameters, 'depthColor').name('depth color')
             .onChange(value => this.waterMaterial.uniforms.uDepthColor.value.set(value));
-        this.debugFolder.addColor(this.seaParameters, 'surfaceColor').name('surface color')
+        this.debugGui.debugFolder.addColor(this.seaParameters, 'surfaceColor').name('surface color')
             .onChange(value => this.waterMaterial.uniforms.uSurfaceColor.value.set(value));
 
-        this.debugFolder.add(this.waterMaterial.uniforms.uShift, 'value', 0, 0.1, .001).name('uShift');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uShift, 'value', 0, 0.1, .001).name('uShift');
 
-        this.debugFolder.add(this.waterMaterial.uniforms.uBigWavesElevation, 'value', 0, 1, .001).name('uBigWavesElevation');
-        this.debugFolder.add(this.waterMaterial.uniforms.uBigWavesFrequency.value, 'x', 0, 10, .001).name('uBigWavesFrequency.x');
-        this.debugFolder.add(this.waterMaterial.uniforms.uBigWavesFrequency.value, 'y', 0, 10, .001).name('uBigWavesFrequency.y');
-        this.debugFolder.add(this.waterMaterial.uniforms.uBigWavesSpeed, 'value', 0, 1, .001).name('uBigWavesSpeed');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uBigWavesElevation, 'value', 0, 1, .001).name('uBigWavesElevation');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uBigWavesFrequency.value, 'x', 0, 10, .001).name('uBigWavesFrequency.x');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uBigWavesFrequency.value, 'y', 0, 10, .001).name('uBigWavesFrequency.y');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uBigWavesSpeed, 'value', 0, 1, .001).name('uBigWavesSpeed');
 
-        this.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesElevation, 'value', 0, 1, .001).name('uSmallWavesElevation');
-        this.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesFrequency, 'value', 0, 30, .001).name('uSmallWavesFrequency');
-        this.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesSpeed, 'value', 0, 4, .001).name('uSmallWavesSpeed');
-        this.debugFolder.add(this.waterMaterial.uniforms.uSmallIterations, 'value', 0, 5, 1).name('uSmallIterations');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesElevation, 'value', 0, 1, .001).name('uSmallWavesElevation');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesFrequency, 'value', 0, 30, .001).name('uSmallWavesFrequency');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uSmallWavesSpeed, 'value', 0, 4, .001).name('uSmallWavesSpeed');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uSmallIterations, 'value', 0, 5, 1).name('uSmallIterations');
 
-        this.debugFolder.add(this.waterMaterial.uniforms.uColorOffset, 'value', 0, 1, .001).name('uColorOffset');
-        this.debugFolder.add(this.waterMaterial.uniforms.uColorMultiplier, 'value', 0, 10, .001).name('uColorMultiplier');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uColorOffset, 'value', 0, 1, .001).name('uColorOffset');
+        this.debugGui.debugFolder.add(this.waterMaterial.uniforms.uColorMultiplier, 'value', 0, 10, .001).name('uColorMultiplier');
 
         // lights
-        this.point1Folder = this.lightFolder.addFolder('Pointlight 1');
-        this.point1Folder.addColor(this.lights.point1, 'color')
+        this.debugGui.point1Folder = this.debugGui.lightFolder.addFolder('Pointlight 1');
+        this.debugGui.point1Folder.addColor(this.lights.point1, 'color')
             .onChange(value => {
                 this.waterMaterial.uniforms.uPoint1Color.value.set(value);
                 this.lightHelpers.point1.material.color.set(value);
             });
-        this.point1Folder.add(this.lights.point1, 'intensity', 0, 20, .01)
+        this.debugGui.point1Folder.add(this.lights.point1, 'intensity', 0, 20, .01)
             .onChange(value => this.waterMaterial.uniforms.uPoint1Intensity.value = value);
-        this.point1Folder.add(this.lights.point1, 'specular', 0, 50, 1)
+        this.debugGui.point1Folder.add(this.lights.point1, 'specular', 0, 50, 1)
             .onChange(value => this.waterMaterial.uniforms.uPoint1Specular.value = value);
-        this.point1Folder.add(this.lights.point1, 'radius', 0, 20, .01)
+        this.debugGui.point1Folder.add(this.lights.point1, 'radius', 0, 20, .01)
             .onChange(value => this.waterMaterial.uniforms.uPoint1Radius.value = value);
-        this.point1Folder.add(this.lights.point1.position, 'x', - 5, 5, .01).name('position.x')
+        this.debugGui.point1Folder.add(this.lights.point1.position, 'x', - 5, 5, .01).name('position.x')
             .onChange(value => this.lightHelpers.point1.position.x = value);
-        this.point1Folder.add(this.lights.point1.position, 'y', - 5, 5, .01).name('position.y')
+        this.debugGui.point1Folder.add(this.lights.point1.position, 'y', - 5, 5, .01).name('position.y')
             .onChange(value => this.lightHelpers.point1.position.y = value);
-        this.point1Folder.add(this.lights.point1.position, 'z', - 5, 5, .01).name('position.z')
+        this.debugGui.point1Folder.add(this.lights.point1.position, 'z', - 5, 5, .01).name('position.z')
             .onChange(value => this.lightHelpers.point1.position.z = value);
-        this.point1Folder.add(this.lights.point1, 'enableHelper')
+        this.debugGui.point1Folder.add(this.lights.point1, 'enableHelper')
             .name('helper')
             .onChange(value => this.lightHelpers.point1.visible = value);
 

@@ -7,9 +7,9 @@ import { SUBTRACTION, Evaluator, Brush } from 'three-bvh-csg';
 
 export default class ProceduralTerrainScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -24,14 +24,11 @@ export default class ProceduralTerrainScene extends World {
         this.setTerrain();
         this.setBoard();
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.shaderFolder = this.debug.ui.addFolder('Shader');
+    setDebugParameters() {
 
-            this.setGui();
-
-        }
+        this.debugGui.shaderFolder = this.debug.ui.addFolder('Shader');
 
     }
 
@@ -178,18 +175,18 @@ export default class ProceduralTerrainScene extends World {
 
     setGui() {
 
-        this.debug.ui.add(this.board.material, 'wireframe').name('board wireframe');
+        this.debugGui.boardWireframe = this.debug.ui.add(this.board.material, 'wireframe').name('board wireframe');
 
-        this.shaderFolder.add(this.uniforms.uPositionFrequency, 'value', 0, 1, .001).name('uPositionFrequency');
-        this.shaderFolder.add(this.uniforms.uStrength, 'value', 0, 10, .001).name('uStrength');
-        this.shaderFolder.add(this.uniforms.uWarpFrequency, 'value', 0, 10, .001).name('uWarpFrequency');
-        this.shaderFolder.add(this.uniforms.uWarpStrength, 'value', 0, 1, .001).name('uWarpStrength');
-        this.shaderFolder.addColor(this.debugObject, 'colorWaterDeep').onChange(value => this.uniforms.uColorWaterDeep.value.set(value));
-        this.shaderFolder.addColor(this.debugObject, 'colorWaterSurface').onChange(value => this.uniforms.uColorWaterSurface.value.set(value));
-        this.shaderFolder.addColor(this.debugObject, 'colorSand').onChange(value => this.uniforms.uColorSand.value.set(value));
-        this.shaderFolder.addColor(this.debugObject, 'colorGrass').onChange(value => this.uniforms.uColorGrass.value.set(value));
-        this.shaderFolder.addColor(this.debugObject, 'colorSnow').onChange(value => this.uniforms.uColorSnow.value.set(value));
-        this.shaderFolder.addColor(this.debugObject, 'colorRock').onChange(value => this.uniforms.uColorRock.value.set(value));
+        this.debugGui.shaderFolder.add(this.uniforms.uPositionFrequency, 'value', 0, 1, .001).name('uPositionFrequency');
+        this.debugGui.shaderFolder.add(this.uniforms.uStrength, 'value', 0, 10, .001).name('uStrength');
+        this.debugGui.shaderFolder.add(this.uniforms.uWarpFrequency, 'value', 0, 10, .001).name('uWarpFrequency');
+        this.debugGui.shaderFolder.add(this.uniforms.uWarpStrength, 'value', 0, 1, .001).name('uWarpStrength');
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorWaterDeep').onChange(value => this.uniforms.uColorWaterDeep.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorWaterSurface').onChange(value => this.uniforms.uColorWaterSurface.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorSand').onChange(value => this.uniforms.uColorSand.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorGrass').onChange(value => this.uniforms.uColorGrass.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorSnow').onChange(value => this.uniforms.uColorSnow.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.debugObject, 'colorRock').onChange(value => this.uniforms.uColorRock.value.set(value));
 
     }
 

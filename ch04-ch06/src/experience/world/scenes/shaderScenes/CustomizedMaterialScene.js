@@ -3,9 +3,9 @@ import World from '../World';
 
 export default class CustomizedMaterialScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -144,7 +144,7 @@ export default class CustomizedMaterialScene extends World {
 
     setModel() {
 
-        this.model = this.resources.items.leePerrySmithModel.scene.children[0];
+        this.model = this.resources.items.leePerrySmithModel.scene.children[0].clone();
         this.model.rotation.y = Math.PI * .5;
         this.model.material = this.material;    // update the material
         this.model.customDepthMaterial = this.depthMaterial;    // update the depth material

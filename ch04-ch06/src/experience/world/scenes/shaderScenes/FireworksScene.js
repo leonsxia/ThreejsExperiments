@@ -12,40 +12,63 @@ const color0 = new Color('#8affff');
 
 export default class FireworksScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder('Debug');
-            this.skyParameters = {
-                turbidity: 10,
-                rayleigh: 3,
-                mieCoefficient: 0.005,
-                mieDirectionalG: 0.95,
-                elevation: - 1.82,
-                azimuth: 180,
-                exposure: this.renderer.toneMappingExposure
-            };
-
-        }
+        super(specs);        
 
     }
 
     init() {
 
+        this.setParameters();
         this.setTextures();
-        this.setEvent();
         this.setSky();
-        this.setGui();
-        
+
         // test
         //this.createFireWork();
 
         // const test = new Mesh(new PlaneGeometry(), new MeshBasicMaterial());
         // this.scene.add(test);
+
+    }
+
+    setParameters() {
+
+        this.skyParameters = {
+            turbidity: 10,
+            rayleigh: 3,
+            mieCoefficient: 0.005,
+            mieDirectionalG: 0.95,
+            elevation: - 1.82,
+            azimuth: 180,
+            exposure: this.renderer.toneMappingExposure
+        };
+
+    }
+
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Debug');
+
+    }
+
+    clickEvent = () => {
+
+        this.createRandomFirework();
+
+    }
+
+    suspend() {
+
+        super.suspend();
+        window.removeEventListener('click', this.clickEvent);
+
+    }
+
+    alive() {
+
+        super.alive();
+        window.addEventListener('click', this.clickEvent);
 
     }
 
@@ -154,16 +177,6 @@ export default class FireworksScene extends World {
 
     }
 
-    setEvent() {
-
-        window.addEventListener('click', () => {
-
-            this.createRandomFirework();
-
-        });
-
-    }
-
     setSky() {
 
         this.sky = new Sky();
@@ -203,13 +216,13 @@ export default class FireworksScene extends World {
 
     setGui() {
 
-        this.debugFolder.add(this.skyParameters, 'turbidity', 0, 20, .1).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'rayleigh', 0, 4, .001).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'mieCoefficient', 0, .1, .001).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'mieDirectionalG', 0, 1, .001).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'elevation', - 3, 65, .01).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'azimuth', - 180, 180, .1).onChange(this.updateSky);
-        this.debugFolder.add(this.skyParameters, 'exposure', 0, 1, .0001).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'turbidity', 0, 20, .1).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'rayleigh', 0, 4, .001).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'mieCoefficient', 0, .1, .001).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'mieDirectionalG', 0, 1, .001).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'elevation', - 3, 65, .01).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'azimuth', - 180, 180, .1).onChange(this.updateSky);
+        this.debugGui.debugFolder.add(this.skyParameters, 'exposure', 0, 1, .0001).onChange(this.updateSky);
 
     }
 

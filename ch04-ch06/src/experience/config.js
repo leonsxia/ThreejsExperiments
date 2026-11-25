@@ -31,7 +31,7 @@ export default {
             position: [1, 1, 1]
         }
     },
-    Galaxy: {
+    GalaxyScene: {
         camera: {
             fov: 75,
             near: 0.1,

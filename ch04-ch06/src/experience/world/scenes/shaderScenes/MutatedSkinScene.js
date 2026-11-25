@@ -13,9 +13,9 @@ await MikkTSpace.ready;
 
 export default class MutatedSkinScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -31,19 +31,16 @@ export default class MutatedSkinScene extends World {
         // this.setWobbleModel();
         this.setMan();
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.VirusFolder = this.debug.ui.addFolder('Virus');
-            this.virusShaderFolder = this.VirusFolder.addFolder('Shader');
-            this.skinWallFolder = this.debug.ui.addFolder('Skin Wall');
-            this.skinWallShaderFolder = this.skinWallFolder.addFolder('Shader');   
-            this.manFolder = this.debug.ui.addFolder('Man');
-            this.manSkinShaderFolder = this.manFolder.addFolder('Shader');
+    setDebugParameters() {
 
-            this.setGui();
-
-        }
+        this.debugGui.virusFolder = this.debug.ui.addFolder('Virus');
+        this.debugGui.virusShaderFolder = this.debugGui.virusFolder.addFolder('Shader');
+        this.debugGui.skinWallFolder = this.debug.ui.addFolder('Skin Wall');
+        this.debugGui.skinWallShaderFolder = this.debugGui.skinWallFolder.addFolder('Shader');
+        this.debugGui.manFolder = this.debug.ui.addFolder('Man');
+        this.debugGui.manSkinShaderFolder = this.debugGui.manFolder.addFolder('Shader');
 
     }
 
@@ -294,7 +291,7 @@ export default class MutatedSkinScene extends World {
 
     setMan() {
 
-        this.man = this.resources.items.leePerrySmithModel.scene.children[0];
+        this.man = this.resources.items.leePerrySmithModel.scene.children[0].clone();
         // this.man.geometry = mergeVertices(this.man.geometry);
         // this.man.geometry.computeTangents();
         this.man.material = this.skinMaterial;
@@ -315,62 +312,68 @@ export default class MutatedSkinScene extends World {
     setGui() {
 
         // virus
-        this.VirusFolder.add(this.virusMaterial, 'metalness', 0, 1, .001).listen();
-        this.VirusFolder.add(this.virusMaterial, 'roughness', 0, 1, .001).listen();
-        this.VirusFolder.add(this.virusMaterial, 'transmission', 0, 1, .001);
-        this.VirusFolder.add(this.virusMaterial, 'ior', 0, 10, .001);
-        this.VirusFolder.add(this.virusMaterial, 'thickness', 0, 10, .001);
-        this.VirusFolder.addColor(this.virusMaterial, 'color');
+        const virusFolder = this.debugGui.virusFolder;
+        virusFolder.add(this.virusMaterial, 'metalness', 0, 1, .001).listen();
+        virusFolder.add(this.virusMaterial, 'roughness', 0, 1, .001).listen();
+        virusFolder.add(this.virusMaterial, 'transmission', 0, 1, .001);
+        virusFolder.add(this.virusMaterial, 'ior', 0, 10, .001);
+        virusFolder.add(this.virusMaterial, 'thickness', 0, 10, .001);
+        virusFolder.addColor(this.virusMaterial, 'color');
 
-        this.virusShaderFolder.add(this.virusUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
-        this.virusShaderFolder.add(this.virusUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
-        this.virusShaderFolder.add(this.virusUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
-        this.virusShaderFolder.add(this.virusUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
-        this.virusShaderFolder.add(this.virusUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
-        this.virusShaderFolder.add(this.virusUniforms.uWarpStrength, 'value', 0, 2, .001).name('uWarpStrength');
-        this.virusShaderFolder.addColor(this.virusObject, 'colorA').onChange(value => this.virusUniforms.uColorA.value.set(value));
-        this.virusShaderFolder.addColor(this.virusObject, 'colorB').onChange(value => this.virusUniforms.uColorB.value.set(value));
-        this.virusShaderFolder.add(this.virusUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
+        const virusShaderFolder = this.debugGui.virusShaderFolder;
+        virusShaderFolder.add(this.virusUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
+        virusShaderFolder.add(this.virusUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
+        virusShaderFolder.add(this.virusUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
+        virusShaderFolder.add(this.virusUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
+        virusShaderFolder.add(this.virusUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
+        virusShaderFolder.add(this.virusUniforms.uWarpStrength, 'value', 0, 2, .001).name('uWarpStrength');
+        virusShaderFolder.addColor(this.virusObject, 'colorA').onChange(value => this.virusUniforms.uColorA.value.set(value));
+        virusShaderFolder.addColor(this.virusObject, 'colorB').onChange(value => this.virusUniforms.uColorB.value.set(value));
+        virusShaderFolder.add(this.virusUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
 
         // skin wall
-        this.skinWallFolder.add(this.skinWallMaterial, 'metalness', 0, 1, .001).listen();
-        this.skinWallFolder.add(this.skinWallMaterial, 'roughness', 0, 1, .001).listen();
-        this.skinWallFolder.add(this.skinWallMaterial, 'transmission', 0, 1, .001);
-        this.skinWallFolder.add(this.skinWallMaterial, 'ior', 0, 10, .001);
-        this.skinWallFolder.add(this.skinWallMaterial, 'thickness', 0, 10, .001);
-        this.skinWallFolder.addColor(this.skinWallMaterial, 'color');
+        const skinWallFolder = this.debugGui.skinWallFolder;
+        skinWallFolder.add(this.skinWallMaterial, 'metalness', 0, 1, .001).listen();
+        skinWallFolder.add(this.skinWallMaterial, 'roughness', 0, 1, .001).listen();
+        skinWallFolder.add(this.skinWallMaterial, 'transmission', 0, 1, .001);
+        skinWallFolder.add(this.skinWallMaterial, 'ior', 0, 10, .001);
+        skinWallFolder.add(this.skinWallMaterial, 'thickness', 0, 10, .001);
+        skinWallFolder.addColor(this.skinWallMaterial, 'color');
 
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
-        this.skinWallShaderFolder.addColor(this.skinWallObject, 'colorA').onChange(value => this.silentHillUniforms.uColorA.value.set(value));
-        this.skinWallShaderFolder.addColor(this.skinWallObject, 'colorB').onChange(value => this.silentHillUniforms.uColorB.value.set(value));
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
-        this.skinWallShaderFolder.add(this.silentHillUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
+        const skinWallShaderFolder = this.debugGui.skinWallShaderFolder;
+        skinWallShaderFolder.add(this.silentHillUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
+        skinWallShaderFolder.add(this.silentHillUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
+        skinWallShaderFolder.add(this.silentHillUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
+        skinWallShaderFolder.add(this.silentHillUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
+        skinWallShaderFolder.add(this.silentHillUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
+        skinWallShaderFolder.add(this.silentHillUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
+        skinWallShaderFolder.addColor(this.skinWallObject, 'colorA').onChange(value => this.silentHillUniforms.uColorA.value.set(value));
+        skinWallShaderFolder.addColor(this.skinWallObject, 'colorB').onChange(value => this.silentHillUniforms.uColorB.value.set(value));
+        skinWallShaderFolder.add(this.silentHillUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
+        skinWallShaderFolder.add(this.silentHillUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
+        skinWallShaderFolder.add(this.silentHillUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
 
         // man skin
-        this.manFolder.add(this.skinMaterial, 'metalness', 0, 1, .001).listen();
-        this.manFolder.add(this.skinMaterial, 'roughness', 0, 1, .001).listen();
-        this.manFolder.add(this.skinMaterial, 'transmission', 0, 1, .001);
-        this.manFolder.add(this.skinMaterial, 'ior', 0, 10, .001);
-        this.manFolder.add(this.skinMaterial, 'thickness', 0, 10, .001);
-        this.manFolder.addColor(this.skinMaterial, 'color');
+        const manFolder = this.debugGui.manFolder;
+        manFolder.add(this.skinMaterial, 'metalness', 0, 1, .001).listen();
+        manFolder.add(this.skinMaterial, 'roughness', 0, 1, .001).listen();
+        manFolder.add(this.skinMaterial, 'transmission', 0, 1, .001);
+        manFolder.add(this.skinMaterial, 'ior', 0, 10, .001);
+        manFolder.add(this.skinMaterial, 'thickness', 0, 10, .001);
+        manFolder.addColor(this.skinMaterial, 'color');
 
-        this.manSkinShaderFolder.add(this.skinUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
-        this.manSkinShaderFolder.add(this.skinUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
-        this.manSkinShaderFolder.add(this.skinUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
-        this.manSkinShaderFolder.add(this.skinUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
-        this.manSkinShaderFolder.add(this.skinUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
-        this.manSkinShaderFolder.add(this.skinUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
-        this.manSkinShaderFolder.addColor(this.skinObject, 'colorA').onChange(value => this.skinUniforms.uColorA.value.set(value));
-        this.manSkinShaderFolder.addColor(this.skinObject, 'colorB').onChange(value => this.skinUniforms.uColorB.value.set(value));
-        this.manSkinShaderFolder.add(this.skinUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
-        this.manSkinShaderFolder.add(this.skinUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
-        this.manSkinShaderFolder.add(this.skinUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
+        const manSkinShaderFolder = this.debugGui.manSkinShaderFolder;
+        manSkinShaderFolder.add(this.skinUniforms.uPositionFrequency, 'value', 0, 2, .001).name('uPositionFrequency');
+        manSkinShaderFolder.add(this.skinUniforms.uTimeFrequency, 'value', 0, 2, .001).name('uTimeFrequency');
+        manSkinShaderFolder.add(this.skinUniforms.uStrength, 'value', 0, 2, .001).name('uStrength');
+        manSkinShaderFolder.add(this.skinUniforms.uWarpPositionFrequency, 'value', 0, 15, .001).name('uWarpPositionFrequency');
+        manSkinShaderFolder.add(this.skinUniforms.uWarpTimeFrequency, 'value', 0, 2, .001).name('uWarpTimeFrequency');
+        manSkinShaderFolder.add(this.skinUniforms.uWarpStrength, 'value', 0, 5, .001).name('uWarpStrength');
+        manSkinShaderFolder.addColor(this.skinObject, 'colorA').onChange(value => this.skinUniforms.uColorA.value.set(value));
+        manSkinShaderFolder.addColor(this.skinObject, 'colorB').onChange(value => this.skinUniforms.uColorB.value.set(value));
+        manSkinShaderFolder.add(this.skinUniforms.uEffectLevel, 'value', 0, 1, .001).name('uEffectLevel');
+        manSkinShaderFolder.add(this.skinUniforms.uFadeout, 'value', 0, 1, .001).name('uFadeout');
+        manSkinShaderFolder.add(this.skinUniforms.uDensity, 'value', 0, 1, .001).name('uDensity');
 
     }
 

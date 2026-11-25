@@ -7,9 +7,9 @@ const v0 = new Vector3();
 
 export default class HalftoneScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -20,14 +20,6 @@ export default class HalftoneScene extends World {
             shadowColor: '#8e19b8',
             lightColor: '#e5ffe0'
         };        
-
-        if (this.debug.active) {
-
-            this.debugObject = {};
-            Object.assign(this.debugObject, this.sceneConfig.renderer);
-            this.debugObject.color = new Color(this.sceneConfig.renderer);
-
-        };
 
     }
 
@@ -81,18 +73,18 @@ export default class HalftoneScene extends World {
         this.setMaterial();
         this.setModel();
         this.setObjects();
-
-        // debug
-        if (this.debug.active) {
-
-            this.rendererFolder = this.debug.ui.addFolder('Renderer');
-            this.shaderFolder = this.debug.ui.addFolder('Shader');
-            this.lightFolder = this.debug.ui.addFolder('Lights');
-
-            this.setGui();
-
-        }
         
+    }
+
+    setDebugParameters() {
+
+        this.debugGui.rendererFolder = this.debug.ui.addFolder('Renderer');
+        this.debugGui.shaderFolder = this.debug.ui.addFolder('Shader');
+        this.debugGui.lightFolder = this.debug.ui.addFolder('Lights');
+
+        this.debugObject = {};
+        Object.assign(this.debugObject, this.sceneConfig.renderer);
+
     }
 
     setMaterial() {
@@ -124,7 +116,7 @@ export default class HalftoneScene extends World {
 
     setModel() {
 
-        this.suzanne = this.resources.items.suzanne.scene;
+        this.suzanne = this.resources.items.suzanne.scene.clone();
         this.suzanne.traverse(object => {
 
             if (object.isMesh) {
@@ -162,28 +154,24 @@ export default class HalftoneScene extends World {
         for (const atlas in this.lights) {
 
             const light = this.lights[atlas];
-            if (this.debug.active) {
-
-                light.gui = this.lightFolder.addFolder(light.display);
-
-            }
+            light.gui = this.debugGui.lightFolder.addFolder(light.display);
 
         }        
 
-        this.rendererFolder.addColor(this.debugObject, 'clearColor')
+        this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
             .onChange(value => this.renderer.setClearColor(value));
 
         // shader
-        this.shaderFolder.addColor(this.materialParameters, 'color').name('mesh color')
+        this.debugGui.shaderFolder.addColor(this.materialParameters, 'color').name('mesh color')
             .onChange(value => this.material.uniforms.uColor.value.set(value));
-        this.shaderFolder.addColor(this.materialParameters, 'shadowColor').name('shadow color')
+        this.debugGui.shaderFolder.addColor(this.materialParameters, 'shadowColor').name('shadow color')
             .onChange(value => this.material.uniforms.uShadowColor.value.set(value));
-        this.shaderFolder.add(this.material.uniforms.uShadowRepetitions, 'value', 1, 300, 1).name('shadow repetitions');
-        this.shaderFolder.add(this.material.uniforms.uShadowFalloffPower, 'value', 1, 10, 1).name('shadow falloff power');
-        this.shaderFolder.addColor(this.materialParameters, 'lightColor').name('light color')
+        this.debugGui.shaderFolder.add(this.material.uniforms.uShadowRepetitions, 'value', 1, 300, 1).name('shadow repetitions');
+        this.debugGui.shaderFolder.add(this.material.uniforms.uShadowFalloffPower, 'value', 1, 10, 1).name('shadow falloff power');
+        this.debugGui.shaderFolder.addColor(this.materialParameters, 'lightColor').name('light color')
             .onChange(value => this.material.uniforms.uLightColor.value.set(value));
-        this.shaderFolder.add(this.material.uniforms.uLightRepetitions, 'value', 1, 300, 1).name('light repetitions');
-        this.shaderFolder.add(this.material.uniforms.uLightFalloffPower, 'value', 1, 10, 1).name('light falloff power');
+        this.debugGui.shaderFolder.add(this.material.uniforms.uLightRepetitions, 'value', 1, 300, 1).name('light repetitions');
+        this.debugGui.shaderFolder.add(this.material.uniforms.uLightFalloffPower, 'value', 1, 10, 1).name('light falloff power');
 
         // lights
         const ambientFolder = this.lights.ambient.gui;

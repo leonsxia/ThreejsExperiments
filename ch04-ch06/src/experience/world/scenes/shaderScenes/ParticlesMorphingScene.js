@@ -6,9 +6,9 @@ import gsap from 'gsap';
 
 export default class ParticlesMorphingScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();        
+        super(specs);        
 
     }
 
@@ -18,16 +18,25 @@ export default class ParticlesMorphingScene extends World {
         this.setModel();
         this.setParticles();
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.rendererFolder = this.debug.ui.addFolder('Renderer');
-            this.shaderFolder = this.debug.ui.addFolder('Shader');
+    suspend() {
 
-            this.setGui();
+        super.suspend();
 
-        }
+        this.animation?.kill();
+        this.killAnimation = false;
 
+    }
+
+    setDebugParameters() {
+
+        this.debugGui.rendererFolder = this.debug.ui.addFolder('Renderer');
+        this.debugGui.shaderFolder = this.debug.ui.addFolder('Shader');
+
+        this.debugObject = {};
+        Object.assign(this.debugObject, this.sceneConfig.renderer);
+        
     }
 
     setParameters() {
@@ -42,22 +51,13 @@ export default class ParticlesMorphingScene extends World {
             infiniteMorph: () => this.infiniteMorphAll(),
             colorA: '#ff7300',
             colorB: '#0091ff'
-
-        };
-
-        if (this.debug.active) {
-
-            this.debugObject = {};
-            Object.assign(this.debugObject, this.sceneConfig.renderer);
-            this.debugObject.color = new Color(this.sceneConfig.renderer);
-
-        };
+        };        
 
     }
 
     setModel() {
 
-        this.models = this.resources.items.textSamples.scene;
+        this.models = this.resources.items.textSamples.scene.clone();
 
         this.modelPositions = this.models.children.map(child => child.geometry.attributes.position);
 
@@ -147,10 +147,10 @@ export default class ParticlesMorphingScene extends World {
 
     morph(idx, callback) {
 
-        if (!callback || this.morphAllRunning) {
+        if (!callback || this.killAnimation) {
 
             this.animation?.kill();
-            this.morphAllRunning = false;
+            this.killAnimation = false;
 
         }
 
@@ -175,7 +175,7 @@ export default class ParticlesMorphingScene extends World {
 
     morphAll(callback) {
         
-        this.morphAllRunning = true;
+        this.killAnimation = true;
 
         const morphAfter1 = () => {
 
@@ -209,8 +209,6 @@ export default class ParticlesMorphingScene extends World {
 
     infiniteMorphAll() {
 
-        this.morphAllRunning = true;
-
         this.morphAll(() => {
 
             this.infiniteMorphAll();
@@ -221,22 +219,22 @@ export default class ParticlesMorphingScene extends World {
 
     setGui() {
 
-        this.rendererFolder.addColor(this.debugObject, 'clearColor')
-            .onChange(value => this.renderer.setClearColor(value));
+        this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
+            .onChange(value => this.renderer.setClearColor(value)).listen();
 
-        this.shaderFolder.addColor(this.particles, 'colorA').onChange(value => this.particles.material.uniforms.uColorA.value.set(value));
-        this.shaderFolder.addColor(this.particles, 'colorB').onChange(value => this.particles.material.uniforms.uColorB.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.particles, 'colorA').onChange(value => this.particles.material.uniforms.uColorA.value.set(value));
+        this.debugGui.shaderFolder.addColor(this.particles, 'colorB').onChange(value => this.particles.material.uniforms.uColorB.value.set(value));
 
-        this.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
-        this.shaderFolder.add(this.particles.material.uniforms.uDuration, 'value', 0, 1, .001).name('uDuration').listen();
-        this.shaderFolder.add(this.particles.material.uniforms.uProgress, 'value', 0, 1, .001).name('uProgress').listen();
+        this.debugGui.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
+        this.debugGui.shaderFolder.add(this.particles.material.uniforms.uDuration, 'value', 0, 1, .001).name('uDuration').listen();
+        this.debugGui.shaderFolder.add(this.particles.material.uniforms.uProgress, 'value', 0, 1, .001).name('uProgress').listen();
 
-        this.shaderFolder.add(this.particles, 'morph0');
-        this.shaderFolder.add(this.particles, 'morph1');
-        this.shaderFolder.add(this.particles, 'morph2');
-        this.shaderFolder.add(this.particles, 'morph3');
-        this.shaderFolder.add(this.particles, 'morphAll');
-        this.shaderFolder.add(this.particles, 'infiniteMorph');
+        this.debugGui.shaderFolder.add(this.particles, 'morph0');
+        this.debugGui.shaderFolder.add(this.particles, 'morph1');
+        this.debugGui.shaderFolder.add(this.particles, 'morph2');
+        this.debugGui.shaderFolder.add(this.particles, 'morph3');
+        this.debugGui.shaderFolder.add(this.particles, 'morphAll');
+        this.debugGui.shaderFolder.add(this.particles, 'infiniteMorph');
 
     }
 

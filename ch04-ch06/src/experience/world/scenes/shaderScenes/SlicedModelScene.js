@@ -6,9 +6,9 @@ import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 
 export default class SlicedModelScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -20,14 +20,11 @@ export default class SlicedModelScene extends World {
         this.setMaterial();
         this.setModel();
 
-        // debug
-        if (this.debug.active) {
-            
-            this.debugFolder = this.debug.ui.addFolder('Debug');
+    }
 
-            this.setGui();
+    setDebugParameters() {
 
-        }
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Debug');
 
     }
 
@@ -163,9 +160,9 @@ export default class SlicedModelScene extends World {
 
     setGui() {
 
-        this.debugFolder.add(this.uniforms.uSliceStart, 'value', - Math.PI , Math.PI, .001).name('uSliceStart');
-        this.debugFolder.add(this.uniforms.uSliceArc, 'value', 0, Math.PI * 2, .001).name('uSiliceArc');
-        this.debugFolder.addColor(this.debugObject, 'backsideColor').onChange(value => this.uniforms.uBacksideColor.value.set(value));
+        this.debugGui.debugFolder.add(this.uniforms.uSliceStart, 'value', - Math.PI , Math.PI, .001).name('uSliceStart');
+        this.debugGui.debugFolder.add(this.uniforms.uSliceArc, 'value', 0, Math.PI * 2, .001).name('uSiliceArc');
+        this.debugGui.debugFolder.addColor(this.debugObject, 'backsideColor').onChange(value => this.uniforms.uBacksideColor.value.set(value));
 
     }
 

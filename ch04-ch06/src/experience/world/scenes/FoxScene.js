@@ -8,26 +8,27 @@ export default class FoxScene extends World {
 
     name = 'FoxScene';
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
     init() {
 
-        this.environment = new Environment();
-        this.floor = new Floor();
-        this.fox = new Fox();
-        this.hamburger = new Hamburger();
-        this.environment.environmentMap.updateMaterials();
+        const sceneObjectConfig = { attachTo: this };
+        this.sceneObjects.environment = new Environment(sceneObjectConfig);
+        this.sceneObjects.floor = new Floor(sceneObjectConfig);
+        this.sceneObjects.fox = new Fox(sceneObjectConfig);
+        this.sceneObjects.hamburger = new Hamburger(sceneObjectConfig);
+        this.sceneObjects.environment.environmentMap.updateMaterials();
 
     }
 
     tick(delta, elapsed) {
 
-        this.fox.update(delta);
-        this.hamburger.update(delta);
+        this.sceneObjects.fox.tick(delta);
+        this.sceneObjects.hamburger.tick(delta);
 
     }
 

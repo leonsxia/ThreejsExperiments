@@ -1,5 +1,5 @@
 import { Group, BufferGeometry, Float32BufferAttribute, ShaderMaterial, Points, AdditiveBlending, Color } from 'three';
-import World from '../World';
+import SceneObjectBase from '../SceneObjectBase';
 import vertexShader from '../../../shaders/galaxy/vertex.glsl';
 import fragmentShader from '../../../shaders/galaxy/fragment.glsl';
 import { lerp3Bands } from '../../../utils/math';
@@ -9,7 +9,7 @@ const _colorMedium = new Color();
 const _colorOutside = new Color();
 const _targetColor = new Color();
 
-export default class Galaxy extends World {
+export default class Galaxy extends SceneObjectBase {
 
     name = 'LFO Galaxy';
 
@@ -58,7 +58,7 @@ export default class Galaxy extends World {
     
     constructor(specs = {}) {
 
-        super();
+        super(specs);
 
         this.group = new Group();
 
@@ -80,22 +80,20 @@ export default class Galaxy extends World {
         this.group.position.set(...position);
         this.group.rotation.set(...rotation);
 
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder(this.name).close();
-            this.galaxyFolder = this.debugFolder.addFolder('Galaxy');
-            this.transformFolder = this.galaxyFolder.addFolder('Transform');
-            this.oscillatorFolder = this.debugFolder.addFolder('Oscillator');
-            this.initGui();
-
-        }
-
     }
 
     init() {
 
         this.generateGalaxy();
+
+    }
+
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder(this.name).close();
+        this.debugGui.galaxyFolder = this.debugGui.debugFolder.addFolder('Galaxy');
+        this.debugGui.transformFolder = this.debugGui.galaxyFolder.addFolder('Transform');
+        this.debugGui.oscillatorFolder = this.debugGui.debugFolder.addFolder('Oscillator');
 
     }
 
@@ -206,52 +204,52 @@ export default class Galaxy extends World {
 
     }
 
-    initGui() {
+    setGui() {
 
         const switchRotateSpeedClt = (value, reset = true) => {
-            if (value === 0) this.galaxyFolder.controllers.find(c => c.property === 'rotateSpeed').show();
+            if (value === 0) this.debugGui.galaxyFolder.controllers.find(c => c.property === 'rotateSpeed').show();
             else {
 
                 if (reset) this.group.rotation.set(0, 0, 0);
-                this.galaxyFolder.controllers.find(c => c.property === 'rotateSpeed').hide();
+                this.debugGui.galaxyFolder.controllers.find(c => c.property === 'rotateSpeed').hide();
 
             };
         }
 
-        this.transformFolder.add(this.group.position, 'x').min(- 10).max(10).step(0.001).name('position x');
-        this.transformFolder.add(this.group.position, 'y').min(- 10).max(10).step(0.001).name('position y');
-        this.transformFolder.add(this.group.position, 'z').min(- 10).max(10).step(0.001).name('position z');
-        this.transformFolder.add(this.group.rotation, 'x').min(- Math.PI).max(Math.PI).step(0.001).name('rotation x');
-        this.transformFolder.add(this.group.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation y');
-        this.transformFolder.add(this.group.rotation, 'z').min(- Math.PI).max(Math.PI).step(0.001).name('rotation z');
+        this.debugGui.transformFolder.add(this.group.position, 'x').min(- 10).max(10).step(0.001).name('position x');
+        this.debugGui.transformFolder.add(this.group.position, 'y').min(- 10).max(10).step(0.001).name('position y');
+        this.debugGui.transformFolder.add(this.group.position, 'z').min(- 10).max(10).step(0.001).name('position z');
+        this.debugGui.transformFolder.add(this.group.rotation, 'x').min(- Math.PI).max(Math.PI).step(0.001).name('rotation x');
+        this.debugGui.transformFolder.add(this.group.rotation, 'y').min(- Math.PI).max(Math.PI).step(0.001).name('rotation y');
+        this.debugGui.transformFolder.add(this.group.rotation, 'z').min(- Math.PI).max(Math.PI).step(0.001).name('rotation z');
 
-        this.galaxyFolder.add(this.parameters, 'count').min(100).max(1000000).step(100).onChange(() => this.generateGalaxy());
-        this.galaxyFolder.add(this.parameters, 'size').min(1).max(50).step(0.1).onChange(value => this.material.uniforms.uSize.value = value * this.renderer.getPixelRatio());
-        this.galaxyFolder.add(this.parameters, 'attenuation').min(1).max(10).step(0.1).onChange(value => this.material.uniforms.uAttenuation.value = value);
-        this.galaxyFolder.add(this.parameters, 'radius').min(0.1).max(20).step(0.1).onChange(() => this.generateGalaxy());
-        this.galaxyFolder.add(this.parameters, 'branches').min(2).max(10).step(1).onChange(() => this.generateGalaxy());
-        this.galaxyFolder.add(this.parameters, 'spinType', this.parameters.spinTypeDef).onChange(value => {
+        this.debugGui.galaxyFolder.add(this.parameters, 'count').min(100).max(1000000).step(100).onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.add(this.parameters, 'size').min(1).max(50).step(0.1).onChange(value => this.material.uniforms.uSize.value = value * this.renderer.getPixelRatio());
+        this.debugGui.galaxyFolder.add(this.parameters, 'attenuation').min(1).max(10).step(0.1).onChange(value => this.material.uniforms.uAttenuation.value = value);
+        this.debugGui.galaxyFolder.add(this.parameters, 'radius').min(0.1).max(20).step(0.1).onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.add(this.parameters, 'branches').min(2).max(10).step(1).onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.add(this.parameters, 'spinType', this.parameters.spinTypeDef).onChange(value => {
             this.material.uniforms.uSpinType.value = value;
             switchRotateSpeedClt(value);
         });
-        this.galaxyFolder.add(this.parameters, 'rotateSpeed').min(- 1).max(1).step(0.001);
-        this.galaxyFolder.add(this.parameters, 'spin').min(-5).max(5).step(0.001).onChange(value => this.material.uniforms.uSpin.value = value);
-        this.galaxyFolder.add(this.parameters, 'spinCoefficient').min(5).max(50).step(0.1).onChange(value => this.material.uniforms.uSpinCoefficient.value = value);
-        this.galaxyFolder.add(this.parameters, 'randomness').min(0).max(2).step(0.001).onChange(() => this.generateGalaxy());
-        this.galaxyFolder.add(this.parameters, 'randomnessPower').min(1).max(10).step(0.001).onChange(() => this.generateGalaxy());
-        this.galaxyFolder.addColor(this.parameters, 'insideColor').onChange(() => this.generateGalaxy());
-        this.galaxyFolder.addColor(this.parameters, 'mediumColor').onChange(() => this.generateGalaxy());
-        this.galaxyFolder.addColor(this.parameters, 'outsideColor').onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.add(this.parameters, 'rotateSpeed').min(- 1).max(1).step(0.001);
+        this.debugGui.galaxyFolder.add(this.parameters, 'spin').min(-5).max(5).step(0.001).onChange(value => this.material.uniforms.uSpin.value = value);
+        this.debugGui.galaxyFolder.add(this.parameters, 'spinCoefficient').min(5).max(50).step(0.1).onChange(value => this.material.uniforms.uSpinCoefficient.value = value);
+        this.debugGui.galaxyFolder.add(this.parameters, 'randomness').min(0).max(2).step(0.001).onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.add(this.parameters, 'randomnessPower').min(1).max(10).step(0.001).onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.addColor(this.parameters, 'insideColor').onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.addColor(this.parameters, 'mediumColor').onChange(() => this.generateGalaxy());
+        this.debugGui.galaxyFolder.addColor(this.parameters, 'outsideColor').onChange(() => this.generateGalaxy());
 
-        this.oscillatorFolder.add(this.oscillator, 'frequency').min(0).max(10).step(0.01).onChange(value => this.material.uniforms.uLfoFrequency.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'amplitude').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoAmplitude.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'speed').min(0).max(5).step(0.01).onChange(value => this.material.uniforms.uLfoSpeed.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'sin modulator1').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoMod1.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'mod1Enable').name('mod 1 enable').onChange(value => this.material.uniforms.uLfoMod1Enable.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'sin modulator2').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoMod2.value = value).listen();
-        this.oscillatorFolder.add(this.oscillator, 'mod2Enable').name('mod 2 enable').onChange(value => this.material.uniforms.uLfoMod2Enable.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'frequency').min(0).max(10).step(0.01).onChange(value => this.material.uniforms.uLfoFrequency.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'amplitude').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoAmplitude.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'speed').min(0).max(5).step(0.01).onChange(value => this.material.uniforms.uLfoSpeed.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'sin modulator1').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoMod1.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'mod1Enable').name('mod 1 enable').onChange(value => this.material.uniforms.uLfoMod1Enable.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'sin modulator2').min(0).max(1).step(0.001).onChange(value => this.material.uniforms.uLfoMod2.value = value).listen();
+        this.debugGui.oscillatorFolder.add(this.oscillator, 'mod2Enable').name('mod 2 enable').onChange(value => this.material.uniforms.uLfoMod2Enable.value = value).listen();
 
-        this.oscillatorFolder.add({
+        this.debugGui.oscillatorFolder.add({
             'reset': () => {
                 this.oscillator.frequency = this.frequency;
                 this.oscillator.amplitude = this.amplitude;
@@ -260,8 +258,8 @@ export default class Galaxy extends World {
                 this.oscillator['sin modulator2'] = this.sinModulator2;
                 this.oscillator.mod1Enable = this.enableMod1;
                 this.oscillator.mod2Enable = this.enableMod2;
-                // this.oscillatorFolder.controllers.find(c => c.property === 'mod1Enable').updateDisplay();
-                // this.oscillatorFolder.controllers.find(c => c.property === 'mod2Enable').updateDisplay();
+                // this.debugGui.oscillatorFolder.controllers.find(c => c.property === 'mod1Enable').updateDisplay();
+                // this.debugGui.oscillatorFolder.controllers.find(c => c.property === 'mod2Enable').updateDisplay();
 
                 this.material.uniforms.uLfoFrequency.value = this.frequency;
                 this.material.uniforms.uLfoAmplitude.value = this.amplitude;

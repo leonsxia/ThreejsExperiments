@@ -7,9 +7,9 @@ import gpuParticlesShader from '../../../shaders/gpgpu/particles.glsl';
 
 export default class GpgpuFlowFieldParticlesScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -22,16 +22,15 @@ export default class GpgpuFlowFieldParticlesScene extends World {
         // debug
         // this.test();
 
-        // debug
-        if (this.debug.active) {
+    }
 
-            this.debug.ui.domElement.style.setProperty('width', '340px');
-            this.rendererFolder = this.debug.ui.addFolder('Renderer');
-            this.shaderFolder = this.debug.ui.addFolder('Shader');
+    setDebugParameters() {
 
-            this.setGui();
+        this.debugGui.rendererFolder = this.debug.ui.addFolder('Renderer');
+        this.debugGui.shaderFolder = this.debug.ui.addFolder('Shader');
 
-        }
+        this.debugObject = {};
+        Object.assign(this.debugObject, this.sceneConfig.renderer);
 
     }
 
@@ -131,18 +130,7 @@ export default class GpgpuFlowFieldParticlesScene extends World {
         this.particles.geometry.setDrawRange(0, this.baseGeometry.count);
         this.particles.geometry.setAttribute('aParticlesUv', new Float32BufferAttribute(this.particles.particlesUvArray, 2));
         this.particles.geometry.setAttribute('aColor', geometry.attributes.color);
-        this.particles.geometry.setAttribute('aSize', new Float32BufferAttribute(this.particles.sizesArray, 1));
-
-        /**
-         * debug
-         */
-        if (this.debug.active) {
-
-            this.debugObject = {};
-            Object.assign(this.debugObject, this.sceneConfig.renderer);
-            this.debugObject.color = new Color(this.sceneConfig.renderer);
-
-        };
+        this.particles.geometry.setAttribute('aSize', new Float32BufferAttribute(this.particles.sizesArray, 1));        
 
     }
 
@@ -174,14 +162,14 @@ export default class GpgpuFlowFieldParticlesScene extends World {
 
     setGui() {
 
-        this.rendererFolder.addColor(this.debugObject, 'clearColor')
+        this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
             .onChange(value => this.renderer.setClearColor(value));
 
-        this.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
-        this.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldInfluence, 'value', 0, 1, .001).name('uFlowfieldInfluence');
-        this.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldStrength, 'value', 0, 10, .001).name('uFlowfieldStrength');
-        this.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldFrequency, 'value', 0, 1, .001).name('uFlowfieldFrequency');
-        this.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uInfluenceFrequency, 'value', 0, 5, .001).name('uFlowfieldFrequency');
+        this.debugGui.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
+        this.debugGui.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldInfluence, 'value', 0, 1, .001).name('uFlowfieldInfluence');
+        this.debugGui.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldStrength, 'value', 0, 10, .001).name('uFlowfieldStrength');
+        this.debugGui.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldFrequency, 'value', 0, 1, .001).name('uFlowfieldFrequency');
+        this.debugGui.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uInfluenceFrequency, 'value', 0, 5, .001).name('uFlowfieldFrequency');
 
     }
 

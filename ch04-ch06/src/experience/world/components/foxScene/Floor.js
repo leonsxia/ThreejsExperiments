@@ -3,9 +3,9 @@ import SceneObjectBase from '../SceneObjectBase';
 
 export default class Floor extends SceneObjectBase {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
         this.setGeometry();
         this.setTextures()

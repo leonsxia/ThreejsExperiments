@@ -4,16 +4,9 @@ export default class Hamburger extends SceneObjectBase {
 
     rotateYVel = 1;
 
-    constructor() {
+    constructor(specs) {
 
-        super();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder('Hamburger');
-
-        }
+        super(specs);
 
         // resource
         this.resource = this.resources.items.hamburgerModel;
@@ -22,9 +15,21 @@ export default class Hamburger extends SceneObjectBase {
 
     }
 
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Hamburger');
+
+    }
+
+    setGui() {
+
+        this.debugGui.debugFolder.add(this, 'rotateYVel', - 2, 2, .01).name('rotation speed');
+
+    }
+
     setModel() {
 
-        this.model = this.resource.scene;
+        this.model = this.resource.scene.clone();
         this.model.scale.set(5, 5, 5);
         this.model.position.set(0, 0.015, 1.5);
         this.scene.add(this.model);
@@ -40,15 +45,9 @@ export default class Hamburger extends SceneObjectBase {
 
         });
 
-        if (this.debug.active) {
-
-            this.debugFolder.add(this, 'rotateYVel', - 2, 2, .01).name('rotation speed');
-
-        }
-
     }
 
-    update(delta) {
+    tick(delta) {
 
         this.model.rotation.y += delta * this.rotateYVel;
 

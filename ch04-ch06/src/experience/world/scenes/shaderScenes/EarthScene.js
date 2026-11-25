@@ -8,9 +8,9 @@ import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 
 export default class EarthScene extends World {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
+        super(specs);
 
     }
 
@@ -23,14 +23,12 @@ export default class EarthScene extends World {
         this.setSun();
         this.setLensflares();
 
-        if (this.debug.active) {
+    }
 
-            this.atmosphereFolder = this.debug.ui.addFolder('Atmosphere');
-            this.sunFolder = this.debug.ui.addFolder('Sun');
+    setDebugParameters() {
 
-            this.setGui();
-
-        }
+        this.debugGui.atmosphereFolder = this.debug.ui.addFolder('Atmosphere');
+        this.debugGui.sunFolder = this.debug.ui.addFolder('Sun');
 
     }
 
@@ -147,22 +145,22 @@ export default class EarthScene extends World {
 
     setGui() {
 
-        this.atmosphereFolder.addColor(this.earthParameters, 'atmosphereDayColor')
+        this.debugGui.atmosphereFolder.addColor(this.earthParameters, 'atmosphereDayColor')
             .onChange(value => {
                 this.earthMaterial.uniforms.uAtmosphereDayColor.value.set(value);
                 this.atmosphereMaterial.uniforms.uAtmosphereDayColor.value.set(value);
             });
 
-        this.atmosphereFolder.addColor(this.earthParameters, 'atmosphereTwilightColor')
+        this.debugGui.atmosphereFolder.addColor(this.earthParameters, 'atmosphereTwilightColor')
             .onChange(value => {
                 this.earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(value);
                 this.atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(value);
             });
 
-        this.sunFolder.add(this.sunParameters.spherical, 'phi', 0, Math.PI)
+        this.debugGui.sunFolder.add(this.sunParameters.spherical, 'phi', 0, Math.PI)
             .onChange(this.updateSun);
 
-        this.sunFolder.add(this.sunParameters.spherical, 'theta', 0, Math.PI)
+        this.debugGui.sunFolder.add(this.sunParameters.spherical, 'theta', 0, Math.PI)
             .onChange(this.updateSun);
 
     }

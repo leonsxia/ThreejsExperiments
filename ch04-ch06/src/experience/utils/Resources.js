@@ -152,7 +152,9 @@ export default class Resourecs extends EventEmitter {
         if (this.loaded === this.toLoad) {
 
             this.ready = true;
-            this.trigger('ready');
+            this.trigger('ready.initWorld');
+            this.trigger('ready.worldsInitCompleted');
+            this.trigger('ready.renderEnabled');
 
         }
 

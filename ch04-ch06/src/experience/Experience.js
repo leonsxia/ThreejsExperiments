@@ -1,37 +1,20 @@
-import { Scene } from 'three';
 import Debug from './utils/Debug';
 import Sizes from './utils/Sizes';
 import Events from './utils/Events';
 import Time from './utils/Time';
-import Camera from './Camera';
 import Renderer from './Renderer';
 import Resourecs from './utils/Resources';
 import sources from './sources';
-import config from './config';
-import FoxScene from './world/scenes/FoxScene';
-import ShaderTestScene from './world/scenes/shaderScenes/ShaderTestScene';
-import ShaderPatternScene from './world/scenes/shaderScenes/ShaderPatternScene';
-import RagingSea from './world/scenes/shaderScenes/RagingSea';
-import Galaxy from './world/scenes/shaderScenes/Galaxy';
-import CustomizedMaterialScene from './world/scenes/shaderScenes/CustomizedMaterialScene';
-import CoffeeSmokeScene from './world/scenes/shaderScenes/CoffeeSmokeScene';
-import HologramScene from './world/scenes/shaderScenes/HologramScene';
-import FireworksScene from './world/scenes/shaderScenes/FireworksScene';
-import LightsShadingScene from './world/scenes/shaderScenes/LightsShadingScene';
-import DemonicSea from './world/scenes/shaderScenes/DemonicSea';
-import HalftoneScene from './world/scenes/shaderScenes/HalftoneScene';
-import EarthScene from './world/scenes/shaderScenes/EarthScene';
-import ParticlesCursorAnimationScene from './world/scenes/shaderScenes/ParticlesCursorAnimationScene';
-import ParticlesMorphingScene from './world/scenes/shaderScenes/ParticlesMorphingScene';
-import GpgpuFlowFieldParticlesScene from './world/scenes/shaderScenes/GpgpuFlowFieldParticlesScene';
-import MutatedSkinScene from './world/scenes/shaderScenes/MutatedSkinScene';
-import SlicedModelScene from './world/scenes/shaderScenes/SlicedModelScene';
-import ProceduralTerrainScene from './world/scenes/shaderScenes/ProceduralTerrainScene';
+import buildWorldScenes, { sceneLabels, initialWorld } from './world/worldBuilder';
+
+import GUI from 'lil-gui';
 import Stats from 'stats.js';
 
 let instance = null;
 
 export default class Experience {
+
+    ready = false;
 
     constructor(_canvas) {
 
@@ -48,23 +31,17 @@ export default class Experience {
 
         // options
         this.canvas = _canvas;
+        this.stats = new Stats();
+        this.setMenu();
 
         // setup
-        this.sceneConfig = config.MutatedSkinScene;
         this.debug = new Debug();
         this.sizes = new Sizes();
-        this.scene = new Scene();
         this.resources = new Resourecs(sources);
-        this.camera = new Camera();
         this.renderer = new Renderer();
         this.time = new Time(this.renderer.instance);
         this.events = new Events();
-        this.worlds = [
-            new MutatedSkinScene()
-        ];
-
-        this.stats = new Stats();
-        document.body.appendChild(this.stats.dom);
+        this.worlds = buildWorldScenes();                
 
         // resize event
         this.sizes.on('resize', () => {
@@ -80,23 +57,73 @@ export default class Experience {
 
         });
 
+        // resources ready event
+        this.resources.on('ready.worldsInitCompleted', () => {
+
+            this.debug.hideAll().show();
+            this.menu.show();
+            document.body.appendChild(this.stats.dom);
+            // change to the initial world
+            this.changeWorld(initialWorld);
+
+        });
+
+        this.resources.on('ready.renderEnabled', () => {
+
+            this.time.start(this.stats);
+
+        });        
+
+    }
+
+    setMenu() {
+
+        this.menu = new GUI({
+            title: 'Menu',
+            width: 250
+        }).hide();
+        this.menu.domElement.style.setProperty('left', '0');
+        this.menu.domElement.style.setProperty('top', '50px');
+
+        this.menu.add({ world: initialWorld }, 'world', sceneLabels)
+            .name('Select World')
+            .onChange(value => {
+
+                this.changeWorld(value);
+
+            });
+
+    }
+
+    changeWorld(world) {
+
+        this.ready = false;
+        this.currentWorld?.suspend();
+        this.currentWorld = this.worlds[world];
+        this.currentWorld.alive();
+        this.renderer.changeWorld(this.currentWorld);
+        this.ready = true;
+
     }
 
     resize() {
 
-        this.camera.resize();
+        for (const world in this.worlds) {
+
+            this.worlds[world].camera.resize();
+
+        }
+
         this.renderer.resize();
         
     }
 
     update(delta, elapsed) {
 
-        this.camera.update();
-        for (const world of this.worlds) {
+        if (!this.ready) return;
 
-            world.update(delta, elapsed);
-
-        }
+        this.currentWorld.camera.update();
+        this.currentWorld.update(delta, elapsed);
 
         // make sure worlds are updated before the final render scene
         this.renderer.update();
@@ -108,29 +135,37 @@ export default class Experience {
         this.sizes.off('resize');
         this.time.off('tick');
 
-        this.scene.traverse((object) => {
+        // dispose all worlds
+        for (const world in this.worlds) {
 
-            if (object.isMesh) {
+            const worldScene = this.worlds[world];
 
-                object.geometry.dispose();
+            worldScene.scene.traverse((object) => {
 
-                for (const key in object.material) {
+                if (object.isMesh) {
 
-                    const value = object.material[key];
+                    object.geometry.dispose();
 
-                    if (value && typeof value.dispose === 'function') {
+                    for (const key in object.material) {
 
-                        value.dispose();
+                        const value = object.material[key];
+
+                        if (value && typeof value.dispose === 'function') {
+
+                            value.dispose();
+
+                        }
 
                     }
 
                 }
 
-            }
+            });
 
-        });
+            worldScene.camera.controls.dispose();
 
-        this.camera.controls.dispose();
+        }
+        
         this.renderer.instance.dispose();
 
         if (this.debug.active) {

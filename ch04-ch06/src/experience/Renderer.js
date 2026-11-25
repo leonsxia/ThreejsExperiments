@@ -1,4 +1,4 @@
-import { WebGLRenderer, CineonToneMapping, ACESFilmicToneMapping, PCFShadowMap, NoToneMapping, AgXToneMapping } from 'three';
+import { WebGLRenderer, PCFShadowMap, CineonToneMapping, ACESFilmicToneMapping, NoToneMapping, AgXToneMapping, ReinhardToneMapping, LinearToneMapping, NeutralToneMapping } from 'three';
 import Experience from './Experience';
 
 export default class Renderer {
@@ -8,11 +8,9 @@ export default class Renderer {
         this.experience = new Experience();
         this.canvas = this.experience.canvas;
         this.sizes = this.experience.sizes;
-        this.scene = this.experience.scene;
-        this.camera = this.experience.camera;
-        this.sceneConfig = this.experience.sceneConfig;
 
         this.setInstance();
+        this.setMenuRenderer();
 
     }
 
@@ -22,14 +20,44 @@ export default class Renderer {
             canvas: this.canvas,
             antialias: true
         });
-        this.instance.toneMapping = NoToneMapping;
+        this.instance.toneMapping = ACESFilmicToneMapping;
         this.instance.toneMappingExposure = 1;
         this.instance.shadowMap.enabled = true;
-        this.instance.shadowMap.type = PCFShadowMap;
+        this.instance.shadowMap.type = PCFShadowMap;        
 
-        if (this.sceneConfig.renderer?.clearColor) {
+        this.resize();
 
-            this.instance.setClearColor(this.sceneConfig.renderer?.clearColor);
+        console.log(`max anisotropy supported: ${this.instance.capabilities.getMaxAnisotropy()}`);
+
+    }
+
+    setMenuRenderer() {
+
+        const menu = this.experience.menu;
+        this.rendererFolder = menu.addFolder('Renderer');
+        this.rendererFolder.add(this.instance, 'toneMapping', {
+                NoToneMapping: NoToneMapping,
+                ACESFilmicToneMapping: ACESFilmicToneMapping,
+                AgXToneMapping: AgXToneMapping,
+                ReinhardToneMapping: ReinhardToneMapping,
+                CineonToneMapping: CineonToneMapping,
+                LinearToneMapping: LinearToneMapping,
+                NeutralToneMapping: NeutralToneMapping
+            })
+            .name('Tone Mapping')
+            .onChange(value => this.instance.toneMapping = value);
+
+    }
+
+    changeWorld(world) {
+
+        if (world.debugObject?.clearColor) {
+
+            this.instance.setClearColor(world.debugObject.clearColor);
+
+        } else if (world.sceneConfig.renderer?.clearColor) {
+
+            this.instance.setClearColor(world.sceneConfig.renderer.clearColor);
 
         } else {
 
@@ -37,9 +65,8 @@ export default class Renderer {
 
         }
 
-        this.resize();
-
-        console.log(`max anisotropy supported: ${this.instance.capabilities.getMaxAnisotropy()}`);
+        this.scene = world.scene;
+        this.camera = world.camera;
 
     }
 

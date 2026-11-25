@@ -3,19 +3,29 @@ import SceneObjectBase from '../SceneObjectBase';
 
 export default class Environment extends SceneObjectBase {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder('Environment');
-
-        }
+        super(specs);
 
         this.setSunLight();
         this.setEnvironmentMap();
+
+    }
+    
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Environment');
+
+    }
+
+    setGui() {
+
+        this.debugGui.debugFolder.add(this.sunLight, 'intensity', 0, 10, .001).name('sun intensity');
+        this.debugGui.debugFolder.add(this.sunLight.position, 'x', - 5, 5, .001).name('sun pos x');
+        this.debugGui.debugFolder.add(this.sunLight.position, 'y', - 5, 5, .001).name('sun pos y');
+        this.debugGui.debugFolder.add(this.sunLight.position, 'z', - 5, 5, .001).name('sun pos z');
+
+        this.debugGui.debugFolder.add(this.environmentMap, 'intensity', 0, 4, .001).name('envMap intensity').onChange(this.environmentMap.updateMaterials);
 
     }
 
@@ -28,16 +38,6 @@ export default class Environment extends SceneObjectBase {
         this.sunLight.shadow.normalBias = .05;
         this.sunLight.position.set(3.5, 2, - 1.25);
         this.scene.add(this.sunLight);
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder.add(this.sunLight, 'intensity', 0, 10, .001).name('sun intensity');
-            this.debugFolder.add(this.sunLight.position, 'x', - 5, 5, .001).name('sun pos x');
-            this.debugFolder.add(this.sunLight.position, 'y', - 5, 5, .001).name('sun pos y');
-            this.debugFolder.add(this.sunLight.position, 'z', - 5, 5, .001).name('sun pos z');
-
-        }
 
     }
 
@@ -66,13 +66,6 @@ export default class Environment extends SceneObjectBase {
 
         }
         // this.environmentMap.updateMaterials();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder.add(this.environmentMap, 'intensity', 0, 4, .001).name('envMap intensity').onChange(this.environmentMap.updateMaterials);
-
-        }
 
     }
 

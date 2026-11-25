@@ -4,25 +4,24 @@ import Experience from './Experience';
 
 export default class Camera {
 
-    constructor() {
+    constructor(specs) {
 
         this.experience = new Experience();
-        this.sizes = this.experience.sizes;
-        this.scene = this.experience.scene;
+        this.sizes = this.experience.sizes;        
         this.canvas = this.experience.canvas;
-        this.sceneConfig = this.experience.sceneConfig;
+        this.specs = specs;
 
         this.setInstance();
         this.setControls();
+        this.stopControls();
 
     }
 
     setInstance() {
 
-        const { fov, near, far, position = [6, 4, 8] } = this.sceneConfig.camera ?? {};
+        const { fov, near, far, position = [6, 4, 8] } = this.specs.camera ?? {};
         this.instance = new PerspectiveCamera(fov, this.sizes.width / this.sizes.height, near, far);
         this.instance.position.set(...position);
-        this.scene.add(this.instance);
 
     }
 
@@ -43,6 +42,18 @@ export default class Camera {
     update() {
 
         this.controls.update();
+
+    }
+
+    stopControls() {
+
+        this.controls.enabled = false;
+
+    }
+
+    startControls() {
+
+        this.controls.enabled = true;
 
     }
 

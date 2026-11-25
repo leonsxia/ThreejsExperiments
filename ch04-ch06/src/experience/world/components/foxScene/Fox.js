@@ -1,18 +1,12 @@
 import { AnimationMixer } from 'three';
+import { clone as skeletonClone } from 'three/addons/utils/SkeletonUtils.js';
 import SceneObjectBase from '../SceneObjectBase';
 
 export default class Fox extends SceneObjectBase {
 
-    constructor() {
+    constructor(specs) {
 
-        super();
-
-        // debug
-        if (this.debug.active) {
-
-            this.debugFolder = this.debug.ui.addFolder('Fox');
-
-        }
+        super(specs);
 
         // resource
         this.resource = this.resources.items.foxModel;
@@ -22,9 +16,28 @@ export default class Fox extends SceneObjectBase {
 
     }
 
+    setDebugParameters() {
+
+        this.debugGui.debugFolder = this.debug.ui.addFolder('Fox');
+
+    }
+
+    setGui() {
+
+        const debugObject = {
+            playIdle: () => { this.animation.play('idle') },
+            playWalking: () => { this.animation.play('walking') },
+            playRunning: () => { this.animation.play('running') }
+        };
+        this.debugGui.debugFolder.add(debugObject, 'playIdle');
+        this.debugGui.debugFolder.add(debugObject, 'playWalking');
+        this.debugGui.debugFolder.add(debugObject, 'playRunning');
+
+    }
+
     setModel() {
 
-        this.model = this.resource.scene;
+        this.model = skeletonClone(this.resource.scene);
         this.model.scale.set(.02, .02, .02);
         this.scene.add(this.model);
 
@@ -72,23 +85,9 @@ export default class Fox extends SceneObjectBase {
 
         };
 
-        // debug
-        if (this.debug.active) {
-
-            const debugObject = {
-                playIdle: () => { this.animation.play('idle') },
-                playWalking: () => { this.animation.play('walking') },
-                playRunning: () => { this.animation.play('running') }
-            };
-            this.debugFolder.add(debugObject, 'playIdle');
-            this.debugFolder.add(debugObject, 'playWalking');
-            this.debugFolder.add(debugObject, 'playRunning');
-
-        }
-
     }
 
-    update(delta) {
+    tick(delta) {
 
         this.animation.mixer.update(delta);
 
