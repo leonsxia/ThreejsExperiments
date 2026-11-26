@@ -17,6 +17,7 @@ import GpgpuFlowFieldParticlesScene from './scenes/shaderScenes/GpgpuFlowFieldPa
 import MutatedSkinScene from './scenes/shaderScenes/MutatedSkinScene';
 import SlicedModelScene from './scenes/shaderScenes/SlicedModelScene';
 import ProceduralTerrainScene from './scenes/shaderScenes/ProceduralTerrainScene';
+import PerformanceTestScene from './scenes/PerformanceTestScene';
 
 import config from '../config';
 import PostEffectScene from './scenes/PostEffectScene';
@@ -28,7 +29,7 @@ for (const scene in config) {
 
 }
 
-const initialWorld = 'PostEffectScene';
+const initialWorld = 'PerformanceTestScene';
 export { sceneLabels, initialWorld };
 
 export default function buildWorldScenes() {
@@ -54,7 +55,8 @@ export default function buildWorldScenes() {
         MutatedSkinScene: new MutatedSkinScene(config.MutatedSkinScene),
         SlicedModelScene: new SlicedModelScene(config.SlicedModelScene),
         ProceduralTerrainScene: new ProceduralTerrainScene(config.ProceduralTerrainScene),
-        PostEffectScene: new PostEffectScene(config.PostEffectScene)
+        PostEffectScene: new PostEffectScene(config.PostEffectScene),
+        PerformanceTestScene: new PerformanceTestScene(config.PerformanceTestScene)
 
     };
 

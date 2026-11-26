@@ -18,12 +18,13 @@ export default class Renderer {
 
         this.instance = new WebGLRenderer({
             canvas: this.canvas,
-            antialias: true
+            antialias: true,
+            powerPreference: 'high-performance'
         });
         this.instance.toneMapping = ACESFilmicToneMapping;
         this.instance.toneMappingExposure = 1;
         this.instance.shadowMap.enabled = true;
-        this.instance.shadowMap.type = PCFShadowMap;        
+        this.instance.shadowMap.type = PCFShadowMap; 
 
         this.resize();
 

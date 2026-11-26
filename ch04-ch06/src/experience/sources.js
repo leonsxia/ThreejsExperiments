@@ -144,6 +144,10 @@ const sourceMaps = {
             name: 'interfaceNormal',
             type: 'texture',
             path: 'textures/normal/interfaceNormalMap.png'
+        }, {
+            name: 'displacementMap',
+            type: 'texture',
+            path: 'textures/displacement/displacementMap.png'
         }
     ],
     cubeTexture: [
