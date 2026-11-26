@@ -25,6 +25,7 @@ export default class World {
         this.resources.on('ready.initWorld', () => {
                         
             this.init();
+            this.postProcessor.init();
             this.setDebug();
 
             for (const object in this.sceneObjects) {

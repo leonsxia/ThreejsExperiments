@@ -28,7 +28,12 @@ export default class PostProcessor {
         this.resources = this.experience.resources;
 
         this.setComposer();
-        this.resize();
+        this.resize();        
+
+    }
+
+    init() {
+
         this.setPass();
         this.setGui();
 
@@ -77,16 +82,16 @@ export default class PostProcessor {
         this.setDisplacementPass();
 
         this.gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
-        this.gammaCorrectionPass.enabled = false;
+        // this.gammaCorrectionPass.enabled = false;
         this.effectComposer.addPass(this.gammaCorrectionPass);
 
-        this.outputPass = new OutputPass();
-        this.outputPass.enabled = false;
-        this.effectComposer.addPass(this.outputPass);
+        // this.outputPass = new OutputPass();
+        // this.outputPass.enabled = false;
+        // this.effectComposer.addPass(this.outputPass);
 
-        this.fxaaPass = new FXAAPass(FXAAShader);
-        this.fxaaPass.enabled = false;
-        this.effectComposer.addPass(this.fxaaPass);
+        // this.fxaaPass = new FXAAPass(FXAAShader);
+        // this.fxaaPass.enabled = false;
+        // this.effectComposer.addPass(this.fxaaPass);
 
     }
 
@@ -94,8 +99,8 @@ export default class PostProcessor {
 
         const tintShader = {
             uniforms: {
-                tDiffuse: { value: null },
-                uTint: new Uniform(new Vector3())
+                tDiffuse: new Uniform(),
+                uTint: new Uniform()
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -124,6 +129,7 @@ export default class PostProcessor {
 
         this.tintPass = new ShaderPass(tintShader);
         this.tintPass.enabled = false;
+        this.tintPass.material.uniforms.uTint.value = new Vector3();
         this.effectComposer.addPass(this.tintPass);
 
     }
@@ -132,9 +138,9 @@ export default class PostProcessor {
 
         const displacementShader = {
             uniforms: {
-                tDiffuse: { value: null },
+                tDiffuse: new Uniform(),
                 uTime: new Uniform(0),
-                uNormalMap: new Uniform(this.resources.items.interfaceNormal)
+                uNormalMap: new Uniform()
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -155,8 +161,12 @@ export default class PostProcessor {
                 void main()
                 {
                     vec3 normalColor = texture(uNormalMap, vUv).xyz * 2.0 - 1.0;
-                    vec2 newUv = vUv + normalColor.xy * 0.01;
-                    vec4 color = texture2D(tDiffuse, newUv);
+                    vec2 newUv = vUv + normalColor.xy * 0.1;
+                    // vec2 newUv = vec2(
+                    //     vUv.x,
+                    //     vUv.y + sin(vUv.x * 10.0 + uTime * 0.1) * 0.1
+                    // );
+                    vec4 color = texture(tDiffuse, newUv);
 
                     vec3 lightDirection = normalize(vec3(- 1.0, 1.0, 0.0));
                     float lightness = clamp(dot(normalColor, lightDirection), 0.0, 1.0);
@@ -169,6 +179,7 @@ export default class PostProcessor {
 
         this.displacementPass = new ShaderPass(displacementShader);
         this.displacementPass.enabled = false;
+        this.displacementPass.material.uniforms.uNormalMap.value = this.resources.items.interfaceNormal;
         this.effectComposer.addPass(this.displacementPass);
 
     }
@@ -203,13 +214,13 @@ export default class PostProcessor {
         this.guis.dispalcementCtl = this.postProcessingGui.add(this.displacementPass, 'enabled').name('Displacement');
 
         this.guis.gammaCorrectionCtl = this.postProcessingGui.add(this.gammaCorrectionPass, 'enabled').name('Gamma Correction');
-        this.guis.fxaaCtl = this.postProcessingGui.add(this.fxaaPass, 'enabled')
-            .name('FXAA')
-            .onChange(value => {
+        // this.guis.fxaaCtl = this.postProcessingGui.add(this.fxaaPass, 'enabled')
+        //     .name('FXAA')
+        //     .onChange(value => {
 
-                this.outputPass.enabled = value;
+        //         this.outputPass.enabled = value;
 
-            });
+        //     });
 
     }
 
