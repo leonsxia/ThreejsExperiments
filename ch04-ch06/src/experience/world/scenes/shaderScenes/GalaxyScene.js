@@ -20,6 +20,21 @@ export default class GalaxyScene extends World {
 
     }
 
+    setDebugParameters() {
+
+        this.debugGui.rendererFolder = this.debug.ui.addFolder('Renderer');
+        this.debugObject = {};
+        Object.assign(this.debugObject, this.sceneConfig.renderer);
+
+    }
+
+    setGui() {
+
+        this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
+            .onChange(value => this.renderer.instance.setClearColor(value)).listen();
+
+    }
+
     tick(delta, elapsed) {
 
         for (const galaxy in this.sceneObjects) {

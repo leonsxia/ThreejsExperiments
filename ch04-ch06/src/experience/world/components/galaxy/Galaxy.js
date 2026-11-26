@@ -174,7 +174,7 @@ export default class Galaxy extends SceneObjectBase {
             fragmentShader: fragmentShader,
             uniforms: {
                 uTime: { value: 0 },
-                uSize: { value: this.parameters.size * this.renderer.getPixelRatio() },
+                uSize: { value: this.parameters.size * this.renderer.instance.getPixelRatio() },
                 uAttenuation: { value: this.parameters.attenuation },
                 uAlphaMap: { value: this.resources.items.particle1 },
                 uSpin: { value: this.parameters.spin },
@@ -224,7 +224,7 @@ export default class Galaxy extends SceneObjectBase {
         this.debugGui.transformFolder.add(this.group.rotation, 'z').min(- Math.PI).max(Math.PI).step(0.001).name('rotation z');
 
         this.debugGui.galaxyFolder.add(this.parameters, 'count').min(100).max(1000000).step(100).onChange(() => this.generateGalaxy());
-        this.debugGui.galaxyFolder.add(this.parameters, 'size').min(1).max(50).step(0.1).onChange(value => this.material.uniforms.uSize.value = value * this.renderer.getPixelRatio());
+        this.debugGui.galaxyFolder.add(this.parameters, 'size').min(1).max(50).step(0.1).onChange(value => this.material.uniforms.uSize.value = value * this.renderer.instance.getPixelRatio());
         this.debugGui.galaxyFolder.add(this.parameters, 'attenuation').min(1).max(10).step(0.1).onChange(value => this.material.uniforms.uAttenuation.value = value);
         this.debugGui.galaxyFolder.add(this.parameters, 'radius').min(0.1).max(20).step(0.1).onChange(() => this.generateGalaxy());
         this.debugGui.galaxyFolder.add(this.parameters, 'branches').min(2).max(10).step(1).onChange(() => this.generateGalaxy());

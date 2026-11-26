@@ -140,7 +140,11 @@ const sourceMaps = {
             name: 'brickWall1Normal',
             type: 'texture',
             path: 'textures/walls/brick_wall_001_nor_gl_2k.jpg'
-        },
+        }, {
+            name: 'interfaceNormal',
+            type: 'texture',
+            path: 'textures/normal/interfaceNormalMap.png'
+        }
     ],
     cubeTexture: [
         {
@@ -213,6 +217,10 @@ const sourceMaps = {
             name: 'gears',
             type: 'gltfModel',
             path: 'models/gears.glb'
+        }, {
+            name: 'damagedHelmet',
+            type: 'gltfModel',
+            path: 'models/DamagedHelmet/glTF/DamagedHelmet.gltf'
         }
     ]
 };

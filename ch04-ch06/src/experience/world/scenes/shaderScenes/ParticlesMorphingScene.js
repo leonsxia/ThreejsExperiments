@@ -220,7 +220,7 @@ export default class ParticlesMorphingScene extends World {
     setGui() {
 
         this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
-            .onChange(value => this.renderer.setClearColor(value)).listen();
+            .onChange(value => this.renderer.instance.setClearColor(value)).listen();
 
         this.debugGui.shaderFolder.addColor(this.particles, 'colorA').onChange(value => this.particles.material.uniforms.uColorA.value.set(value));
         this.debugGui.shaderFolder.addColor(this.particles, 'colorB').onChange(value => this.particles.material.uniforms.uColorB.value.set(value));

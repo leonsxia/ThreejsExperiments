@@ -1,6 +1,7 @@
 import { Scene } from 'three';
 import Experience from '../../Experience';
 import Camera from '../../Camera';
+import PostProcessor from '../../PostProcessor';
 
 export default class World {
 
@@ -10,11 +11,12 @@ export default class World {
         this.camera = new Camera(specs);
         this.scene = new Scene();
         this.scene.add(this.camera.instance);
+        this.postProcessor = new PostProcessor(this.scene, this.camera.instance);
 
         this.sceneObjects = {};
 
         this.experience = new Experience();
-        this.renderer = this.experience.renderer.instance;
+        this.renderer = this.experience.renderer;
         this.sizes = this.experience.sizes;
         this.resources = this.experience.resources;
         this.debug = this.experience.debug;
@@ -58,6 +60,7 @@ export default class World {
         }
 
         this.camera.stopControls();
+        this.postProcessor.suspend();
 
     }
 
@@ -77,6 +80,7 @@ export default class World {
         }
 
         this.camera.startControls();
+        this.postProcessor.alive();
 
     }
 

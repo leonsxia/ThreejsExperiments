@@ -51,7 +51,7 @@ export default class GpgpuFlowFieldParticlesScene extends World {
         const size = Math.ceil(Math.sqrt(this.baseGeometry.count))
         this.gpgpu = {
             size,
-            computation: new GPUComputationRenderer(size, size, this.renderer),
+            computation: new GPUComputationRenderer(size, size, this.renderer.instance),
         };
 
         // base particles
@@ -163,7 +163,7 @@ export default class GpgpuFlowFieldParticlesScene extends World {
     setGui() {
 
         this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
-            .onChange(value => this.renderer.setClearColor(value));
+            .onChange(value => this.renderer.instance.setClearColor(value));
 
         this.debugGui.shaderFolder.add(this.particles.material.uniforms.uSize, 'value', 0, 1, .001).name('uSize');
         this.debugGui.shaderFolder.add(this.gpgpu.particlesVariable.material.uniforms.uFlowfieldInfluence, 'value', 0, 1, .001).name('uFlowfieldInfluence');

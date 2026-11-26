@@ -159,7 +159,7 @@ export default class HalftoneScene extends World {
         }        
 
         this.debugGui.rendererFolder.addColor(this.debugObject, 'clearColor')
-            .onChange(value => this.renderer.setClearColor(value));
+            .onChange(value => this.renderer.instance.setClearColor(value));
 
         // shader
         this.debugGui.shaderFolder.addColor(this.materialParameters, 'color').name('mesh color')

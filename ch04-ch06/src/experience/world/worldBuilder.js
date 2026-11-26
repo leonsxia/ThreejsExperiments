@@ -19,6 +19,7 @@ import SlicedModelScene from './scenes/shaderScenes/SlicedModelScene';
 import ProceduralTerrainScene from './scenes/shaderScenes/ProceduralTerrainScene';
 
 import config from '../config';
+import PostEffectScene from './scenes/PostEffectScene';
 
 const sceneLabels = [];
 for (const scene in config) {
@@ -27,7 +28,7 @@ for (const scene in config) {
 
 }
 
-const initialWorld = 'ProceduralTerrainScene';
+const initialWorld = 'PostEffectScene';
 export { sceneLabels, initialWorld };
 
 export default function buildWorldScenes() {
@@ -52,7 +53,8 @@ export default function buildWorldScenes() {
         GpgpuFlowFieldParticlesScene: new GpgpuFlowFieldParticlesScene(config.GpgpuFlowFieldParticlesScene),
         MutatedSkinScene: new MutatedSkinScene(config.MutatedSkinScene),
         SlicedModelScene: new SlicedModelScene(config.SlicedModelScene),
-        ProceduralTerrainScene: new ProceduralTerrainScene(config.ProceduralTerrainScene)
+        ProceduralTerrainScene: new ProceduralTerrainScene(config.ProceduralTerrainScene),
+        PostEffectScene: new PostEffectScene(config.PostEffectScene)
 
     };
 

@@ -80,10 +80,9 @@ export default class Experience {
 
         this.menu = new GUI({
             title: 'Menu',
-            width: 250
+            width: 200
         }).hide();
-        this.menu.domElement.style.setProperty('left', '0');
-        this.menu.domElement.style.setProperty('top', '50px');
+        this.menu.domElement.style.setProperty('left', '81px');
 
         this.menu.add({ world: initialWorld }, 'world', sceneLabels)
             .name('Select World')
@@ -126,7 +125,15 @@ export default class Experience {
         this.currentWorld.update(delta, elapsed);
 
         // make sure worlds are updated before the final render scene
-        this.renderer.update();
+        if (this.currentWorld.postProcessor.enabled) {
+
+            this.currentWorld.postProcessor.update(delta, elapsed);
+
+        } else {
+
+            this.renderer.update();
+
+        }
 
     }
 

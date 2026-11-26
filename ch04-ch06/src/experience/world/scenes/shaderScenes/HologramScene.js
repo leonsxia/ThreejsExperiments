@@ -126,7 +126,7 @@ export default class HologramScene extends World {
 
         this.debugGui.debugFolder.addColor(this.debugObject, 'clearColor')
             .onChange(value => {
-                this.renderer.setClearColor(value);
+                this.renderer.instance.setClearColor(value);
             });
 
         // vertex shader

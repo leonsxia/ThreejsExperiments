@@ -41,7 +41,7 @@ export default class FireworksScene extends World {
             mieDirectionalG: 0.95,
             elevation: - 1.82,
             azimuth: 180,
-            exposure: this.renderer.toneMappingExposure
+            exposure: this.renderer.instance.toneMappingExposure
         };
 
     }
@@ -206,7 +206,7 @@ export default class FireworksScene extends World {
 
             uniforms['sunPosition'].value.copy(this.sun);
 
-            this.renderer.toneMappingExposure = this.skyParameters.exposure;
+            this.renderer.instance.toneMappingExposure = this.skyParameters.exposure;
 
         };
 

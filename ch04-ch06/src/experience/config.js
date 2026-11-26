@@ -38,6 +38,9 @@ export default {
             far: 100,
             position: [0, 7, 7]
         },
+        renderer: {
+            clearColor: '#000000'
+        },
         LfoGalaxy001: {
             name: 'LFO Galaxy 001',
             parameters: {
@@ -250,6 +253,14 @@ export default {
             near: 0.1,
             far: 100,
             position: [- 10, 6, - 2]
+        }
+    },
+    PostEffectScene: {
+        camera: {
+            fov: 75,
+            near: 0.1,
+            far: 100,
+            position: [4, 1, - 4]
         }
     }
 };
