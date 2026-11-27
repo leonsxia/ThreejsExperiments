@@ -64,15 +64,18 @@ export default class Experience {
 
             window.setTimeout(() => {
 
-                this.worldBuilder.revealScene(() => {
+                this.worldBuilder.revealScene(
+                    null,                    
+                    () => {
 
-                    this.debug.hideAll().show();
-                    this.menu.show();
-                    document.body.appendChild(this.stats.dom);
-                    // change to the initial world
-                    this.currentWorld.alive();
+                        this.debug.hideAll().show();
+                        this.menu.show();
+                        document.body.appendChild(this.stats.dom);
+                        // change to the initial world
+                        this.currentWorld.alive();
 
-                });
+                    }
+                );
 
             }, 0);
 

@@ -92,7 +92,7 @@ export default class WorldBuilder {
 
     }
 
-    revealScene(callback) {
+    revealScene(onUpdate, onComplete) {
 
         // Update loadingBarElement
         this.loadingBar.classList.add('ended');
@@ -104,10 +104,13 @@ export default class WorldBuilder {
                 duration: 0.5,
                 value: 0,
                 delay: 0,
+                onUpdate: () => {
+                    onUpdate?.();
+                },
                 onComplete: () => {
                     
                     this.screenMask.mesh.removeFromParent();
-                    callback?.();                    
+                    onComplete?.();                    
                 
                 }
             }
