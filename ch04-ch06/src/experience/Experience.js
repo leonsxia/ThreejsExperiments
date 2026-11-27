@@ -5,10 +5,11 @@ import Time from './utils/Time';
 import Renderer from './Renderer';
 import Resourecs from './utils/Resources';
 import sources from './sources';
-import buildWorldScenes, { sceneLabels, initialWorld } from './world/worldBuilder';
+import WorldBuilder, { initialWorld, sceneLabels } from './world/WorldBuilder';
 
 import GUI from 'lil-gui';
 import Stats from 'stats.js';
+
 
 let instance = null;
 
@@ -41,11 +42,12 @@ export default class Experience {
         this.renderer = new Renderer();
         this.time = new Time(this.renderer.instance);
         this.events = new Events();
-        this.worlds = buildWorldScenes();                
+        this.worldBuilder = new WorldBuilder();
+        this.worlds = this.worldBuilder.build();
 
         // resize event
         this.sizes.on('resize', () => {
-            
+
             this.resize();
 
         });
@@ -60,19 +62,23 @@ export default class Experience {
         // resources ready event
         this.resources.on('ready.worldsInitCompleted', () => {
 
-            this.debug.hideAll().show();
-            this.menu.show();
-            document.body.appendChild(this.stats.dom);
-            // change to the initial world
-            this.changeWorld(initialWorld);
+            window.setTimeout(() => {
+
+                this.worldBuilder.revealScene(() => {
+
+                    this.debug.hideAll().show();
+                    this.menu.show();
+                    document.body.appendChild(this.stats.dom);
+                    // change to the initial world
+                    this.currentWorld.alive();
+
+                });
+
+            }, 0);
 
         });
 
-        this.resources.on('ready.renderEnabled', () => {
-
-            this.time.start(this.stats);
-
-        });        
+        this.time.start(this.stats);
 
     }
 
@@ -96,12 +102,9 @@ export default class Experience {
 
     changeWorld(world) {
 
-        this.ready = false;
         this.currentWorld?.suspend();
         this.currentWorld = this.worlds[world];
         this.currentWorld.alive();
-        this.renderer.changeWorld(this.currentWorld);
-        this.ready = true;
 
     }
 
@@ -114,12 +117,12 @@ export default class Experience {
         }
 
         this.renderer.resize();
-        
+
     }
 
     update(delta, elapsed) {
 
-        if (!this.ready) return;
+        // if (!this.ready) return;
 
         this.currentWorld.camera.update();
         this.currentWorld.update(delta, elapsed);
@@ -172,7 +175,7 @@ export default class Experience {
             worldScene.camera.controls.dispose();
 
         }
-        
+
         this.renderer.instance.dispose();
 
         if (this.debug.active) {

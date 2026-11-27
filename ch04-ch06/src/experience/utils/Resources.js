@@ -146,6 +146,7 @@ export default class Resourecs extends EventEmitter {
         this.items[source.name] = file;
 
         this.loaded++;
+        this.trigger('progress', { loaded: this.loaded, total: this.toLoad });
 
         // console.log(`${source.name} is loaded`);
 
@@ -154,7 +155,7 @@ export default class Resourecs extends EventEmitter {
             this.ready = true;
             this.trigger('ready.initWorld');
             this.trigger('ready.worldsInitCompleted');
-            this.trigger('ready.renderEnabled');
+            // this.trigger('ready.renderEnabled');
 
         }
 

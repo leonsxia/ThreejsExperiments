@@ -48,6 +48,8 @@ export default class World {
     // implemented by children or inherited by children
     suspend() {
 
+        this.experience.ready = false;
+
         for (const gui in this.debugGui) {
 
             this.debugGui[gui].hide();
@@ -82,6 +84,8 @@ export default class World {
 
         this.camera.startControls();
         this.postProcessor.alive();
+        this.renderer.changeWorld(this);
+        this.experience.ready = true;
 
     }
 

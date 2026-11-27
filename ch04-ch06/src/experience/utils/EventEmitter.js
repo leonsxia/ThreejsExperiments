@@ -167,7 +167,7 @@ export default class EventEmitter {
 
             }
 
-            for (let i = 0, il = this.callbacks[name.namespace][name.value].length; i < il; i++) {
+            for (let i = 0, il = this.callbacks[name.namespace][name.value]?.length; i < il; i++) {
 
                 const callback = this.callbacks[name.namespace][name.value][i];
                 callback.apply(this, _args);
