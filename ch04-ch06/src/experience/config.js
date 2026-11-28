@@ -270,5 +270,13 @@ export default {
             far: 100,
             position: [2, 2, 6]
         }
+    },
+    HtmlMixingWebglScene: {
+        camera: {
+            fov: 75,
+            near: 0.1,
+            far: 100,
+            position: [4, 1, - 4]
+        }
     }
 };

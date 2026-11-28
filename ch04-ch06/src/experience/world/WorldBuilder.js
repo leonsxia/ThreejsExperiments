@@ -19,13 +19,14 @@ import SlicedModelScene from './scenes/shaderScenes/SlicedModelScene';
 import ProceduralTerrainScene from './scenes/shaderScenes/ProceduralTerrainScene';
 import PostEffectScene from './scenes/PostEffectScene';
 import PerformanceTestScene from './scenes/PerformanceTestScene';
+import HtmlMixingWebglScene from './scenes/HtmlMixingWebglScene';
 
 import ScreenMask from './components/ScreenMask';
 import config from '../config';
 import Experience from '../Experience';
 import gsap from 'gsap';
 
-const initialWorld = 'MutatedSkinScene';
+const initialWorld = 'HtmlMixingWebglScene';
 const sceneLabels = [];
 
 for (const scene in config) {
@@ -70,7 +71,8 @@ export default class WorldBuilder {
             SlicedModelScene: new SlicedModelScene(config.SlicedModelScene),
             ProceduralTerrainScene: new ProceduralTerrainScene(config.ProceduralTerrainScene),
             PostEffectScene: new PostEffectScene(config.PostEffectScene),
-            PerformanceTestScene: new PerformanceTestScene(config.PerformanceTestScene)
+            PerformanceTestScene: new PerformanceTestScene(config.PerformanceTestScene),
+            HtmlMixingWebglScene: new HtmlMixingWebglScene(config.HtmlMixingWebglScene)
 
         };
 
